@@ -83,3 +83,17 @@ function handleNewSeat(val) {
     console.log("Exit  boardNbr: %s, seatIx: %d, tableIx: %d", bNbr, seatIx, tableIx);
     //testBoardSettings();
   }
+
+//aide memoire table entries
+                <tr>
+                  <td> 1<span class="clubs">&clubs;</span> </td>
+                  <td>P</td>
+                  <td> 1<span class="diams">&diams;</span> </td>
+                  <td>P</td>
+               </tr>
+               <tr>
+                  <td> 1<span class="hearts">&hearts;</span> </td>
+                  <td>X</td>
+                  <td> 1<span class="spades">&spades;</span> </td>
+                  <td>P</td>
+               </tr>

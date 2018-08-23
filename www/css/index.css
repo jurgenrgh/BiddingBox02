@@ -172,6 +172,7 @@ table, td, th {
   background: #0288D1;
 }
 
+/*****************************************************/
 /* Menu Buttons */
 
 .btn-group button {
@@ -222,7 +223,6 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
    opacity: 0.3;
    height: 36px;
-   background-color: red;
 }
 
 
@@ -241,7 +241,52 @@ select {
 }
 
 /* Add a background color on hover */
-
 .btn-group button:hover {
   background-color: #3e8e41;
+}
+
+/*************************************************/
+/* Modal MessageBox Styles */
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 40%; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    /*background-color: rgb(0,0,0); /* Fallback color */*/
+    /*background-color: rgba(0,0,0,0.4); /* Black w/ opacity */*/
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #EF6C00;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+    margin: auto;
+    padding: 20px;
+    /*border: 1px solid #888;*/
+    width: 50%;
+}
+
+/* The Close Button */
+.close-msg {
+    color: black;
+    float: right;
+    text-align: top;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.close-msg:hover,
+.close-msg:focus {
+    color: #555;
+    text-decoration: none;
+    cursor: pointer;
 }

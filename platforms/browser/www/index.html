@@ -7,6 +7,8 @@
    <title>BB_02</title>
    <link rel="stylesheet" type="text/css" href="css/index.css">
    <!--<link rel="stylesheet" type="text/css" href="css/splash.css">-->
+   <script type="text/javascript" src="cordova.js"></script>
+   <script type="text/javascript" src="js/index.js"></script>
 </head>
 
 <body>
@@ -18,9 +20,6 @@
       </div>
   </div>
   -->
-
-   <script type="text/javascript" src="cordova.js"></script>
-   <script type="text/javascript" src="js/index.js"></script>
 
 
 
@@ -89,11 +88,11 @@
             <form>
                <div class="btn-group">
                   <div>
-                     <button>Setup</button>
-                     <button>Director!</button>
-                     <button>&#x27A3;  LHO</button>
-                     <button>&#x27A3;  RHO</button>
-                     <button>Help</button>
+                     <button id="setup" onclick="handleSetup()">Setup</button>
+                     <button id="lho" onclick="handleLHO()">&#x27A3;  LHO</button>
+                     <button id="rho" onclick="handleRHO()">&#x27A3;  RHO</button>
+                     <button id="restore" onclick="handleRestore()">Restore</button>
+                     <button id="close" onclick="handleClose()">Close</button>
                   </div>
                </div>
             </form>
@@ -108,18 +107,28 @@
                   <th>S</th>
                </tr>
                <tr>
-                  <td> 1<span class="clubs">&clubs;</span> </td>
-                  <td>P</td>
-                  <td> 1<span class="diams">&diams;</span> </td>
-                  <td>P</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
                </tr>
                <tr>
-                  <td> 1<span class="hearts">&hearts;</span> </td>
-                  <td>X</td>
-                  <td> 1<span class="spades">&spades;</span> </td>
-                  <td>P</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
                </tr>
             </table>
+         </div>
+      </div>
+
+      <!-- The Modal MessageBox: Your Bid -->
+      <!-- Normally invisible -->
+      <div id="msgYourBid" class="modal">
+         <!-- Modal content -->
+         <div class="modal-content">
+            <span id="xYourBid" class="close-msg">&times;</span>
+            <p>It's your turn: Please Bid</p>
          </div>
       </div>
 

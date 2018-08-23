@@ -2,11 +2,21 @@
 //Global Variables
 var seatIx = 0; // Seat of this tablet
 var tableIx = 0; // Table of this tablet
+
 var boardIx = 0; // Board index
 var dealerIx = 0; // Dealer; function of boardIx
 var vulIx = 0; // Vulnerability; function of boardIx
+
+var roundIx = 0; //current round of bidding
+var bidderIx = 0; //current bidder
+
+var roundArray = [];
+
 var seatOrder = ["N", "E", "S", "W"];
+var bidOrder = ["W", "N", "E", "S"];
 var vulOrder = ["None", "NS", "EW", "All"];
+var suitNameOrder = ["Clubs", "Diams", "Hearts", "Spades", "NT"];
+var suitLetterOrder = ["C", "D", "H", "S", "NT"];
 
 var vulColor = '#d50000';
 var nvulColor = '#2e7d32';
@@ -39,6 +49,9 @@ var app = {
 
     var auction = document.getElementById("auction");
     auction.addEventListener("touchstart", handleTouch, {passive: true});
+
+    var xSpan = document.getElementById("xYourBid");
+    xSpan.addEventListener("click", removeMsgYourBid, false);
 
     screen.orientation.lock("portrait-primary");
     drawCompass();
@@ -100,64 +113,77 @@ function drawCompass() {
   document.getElementById("input-board-nbr").value = bnbr;
 
   //dealer
-  if(dealerIx == 0){
+  if (dealerIx == 0) {
     textNorth.textContent = "N*";
-  }
-  else{
+  } else {
     textNorth.textContent = "N";
   }
-  if(dealerIx == 1){
+  if (dealerIx == 1) {
     textEast.textContent = "E*";
-  }
-  else{
+  } else {
     textEast.textContent = "E";
   }
-  if(dealerIx == 2){
+  if (dealerIx == 2) {
     textSouth.textContent = "S*";
-  }
-  else{
+  } else {
     textSouth.textContent = "S";
   }
-  if(dealerIx == 3){
+  if (dealerIx == 3) {
     textWest.textContent = "W*";
-  }
-  else{
+  } else {
     textWest.textContent = "W";
   }
 
   //vulnerability
-  if(vulIx == 0){
+  if (vulIx == 0) {
     rectNorth.style.fill = nvulColor;
     rectEast.style.fill = nvulColor;
     rectSouth.style.fill = nvulColor;
     rectWest.style.fill = nvulColor;
   }
-  if(vulIx == 1){
+  if (vulIx == 1) {
     rectNorth.style.fill = vulColor;
     rectEast.style.fill = nvulColor;
     rectSouth.style.fill = vulColor;
     rectWest.style.fill = nvulColor;
   }
-  if(vulIx == 2){
+  if (vulIx == 2) {
     rectNorth.style.fill = nvulColor;
     rectEast.style.fill = vulColor;
     rectSouth.style.fill = nvulColor;
     rectWest.style.fill = vulColor;
   }
-  if(vulIx == 3){
+  if (vulIx == 3) {
     rectNorth.style.fill = vulColor;
     rectEast.style.fill = vulColor;
     rectSouth.style.fill = vulColor;
     rectWest.style.fill = vulColor;
   }
+}
 
+function handleSetup(){
+  alert("Setup");
+}
+function handleMsgToLHO(){
+  alert("Send a Message to LHO. (Not yet available)");
+}
+function handleMsgToRHO(){
+  alert("Send a Message to RHO. (Not yet available)");
+}
+function handleRestore(){
+  alert("Restore this Tablet to last known state?")
+}
+function handleClose(){
+  alert("Close down? This will lose all data and settings" )
 }
 
 function handleTricks(idTricks) {
+  roundArray[bidderIx].tricks = idTricks;
   alert(idTricks);
 }
 
 function handleSuits(idSuits) {
+  roundArray[bidderIx].suit = idSuits;
   alert(idSuits);
 }
 
@@ -167,10 +193,9 @@ function handleCalls(idCalls) {
 
 //////////////////////////////////////////////////
 // This is the event that handles input from the
-// form element table nmber.
+// form element table number.
 ///////////////////////////////////////////////
 function submitTableNumber(event) {
-  //alert("submit Table Number");
   event.preventDefault(); // prevents the "submit form action"
   simulateClick(); // causes the keyboard to hide
   handleNewTableNumber();
@@ -247,6 +272,7 @@ function handleNewBoardNumber() {
   vulIx = (Math.floor(boardIx / 4) + dealerIx) % 4;
   var textAfter = svgElem.textContent;
   drawCompass();
+  initBiddingRecord();
   //alert("handleNewBoardNumber Before: " + textBefore + " After: " + textAfter);
 }
 
@@ -299,7 +325,6 @@ function simulateClick() {
   var cb = document.getElementById('auction');
   cb.dispatchEvent(event);
   //alert("simulate Click");
-
 }
 
 //The point of this is to make the soft keyboard go away.
@@ -314,4 +339,88 @@ function simulateClick() {
 function handleTouch() {
   document.activeElement.blur();
   //alert("handle touchstart");
+}
+
+///////////////////////////////////////////////////////////////
+////// Section dealing with the bids and calls ////
+///////////////////////////////////////////////////////////////
+
+//
+// Call Object:
+// tricks: 0,1,....,7
+// suits: "C", "D", "H", "S", "NT" if 0 != tricks
+// suits: "empty","blank", "Pass", "X", "XX" if tricks = 0
+// alert: true/false except for "blank" and "empty"
+// "blank" ("-") means diagram slot empty because dealer later in rotation
+// "empty"(&nbsp;) means no bid yet
+//
+function callObj(tricks, suit, alert) {
+  this.tricks = tricks;
+  this.suit = suit;
+  this.alert = alert;
+}
+
+// Resets the bidding record by clearing all cells
+// Inserts &ndash; to left of bidOrder
+//
+function initBiddingRecord() {
+  var i;
+  var j;
+  var row;
+  var col;
+  roundIx = 0;
+  bidderIx = dealerIx;
+
+  var table = document.getElementById("auction");
+  for (i = 1, row; row = table.rows[i]; i++) {
+    for (j = 0, col; col = row.cells[j]; j++) {
+      table.rows[i].cells[j].innerHTML = "&nbsp;";
+    }
+  }
+
+  //Init first round of bidding
+  for (i = 0; i < 4; i++) {
+    roundArray[i] = new callObj(0, "&nbsp;", false);
+  }
+
+  if (dealerIx > 0) {
+    roundArray[0].suit = "&ndash;";
+  }
+  if (dealerIx > 1) {
+    roundArray[1].suit = "&ndash;";
+  }
+  if (dealerIx > 2) {
+    roundArray[2].suit = "&ndash;";
+  }
+
+  console.log(roundArray);
+
+  row = table.rows[1];
+  for (j = 0, col; col = row.cells[j]; j++) {
+    table.rows[1].cells[j].innerHTML = roundArray[j].suit;
+  }
+  if (dealerIx == seatIx) {
+    promptBidder();
+  }
+}
+
+////// Modal MessageBox: Your Bid ////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+function promptBidder() {
+  var msg = document.getElementById("msgYourBid");
+  msg.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+function removeMsgYourBid(){
+  var msg = document.getElementById('msgYourBid');
+  msg.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  var msg = document.getElementById('msgYourBid');
+  if (event.target == msg) {
+    msg.style.display = "none";
+  }
 }
