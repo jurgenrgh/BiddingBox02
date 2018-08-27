@@ -1,200 +1,35 @@
-//////////////////////////////////////////////
-//Global Variables
-var seatIx = 0; // Seat of this tablet
-var tableIx = 0; // Table of this tablet
-
-var boardIx = 0; // Board index
-var dealerIx = 0; // Dealer; function of boardIx
-var vulIx = 0; // Vulnerability; function of boardIx
-
-var roundIx = 0; //current round of bidding
-var bidderIx = 0; //current bidder
-
-var roundArray = [];
-
-var seatOrder = ["N", "E", "S", "W"];
-var bidOrder = ["W", "N", "E", "S"];
-var vulOrder = ["None", "NS", "EW", "All"];
-var suitNameOrder = ["Clubs", "Diams", "Hearts", "Spades", "NT"];
-var suitLetterOrder = ["C", "D", "H", "S", "NT"];
-
-var vulColor = '#d50000';
-var nvulColor = '#2e7d32';
-
-//The following is copied from the HelloWorld example
-//It waits for device ready and then does nothing but console.log
-var app = {
-  // Application Constructor
-  initialize: function() {
-    this.bindEvents();
-  },
-  // Bind Event Listeners
-  //
-  // Bind any events that are required on startup. Common events are:
-  // 'load', 'deviceready', 'offline', and 'online'.
-  bindEvents: function() {
-    document.addEventListener('deviceready', this.onDeviceReady, false);
-
-  },
-  // deviceready Event Handler
-  //
-  // The scope of 'this' is the event. In order to call the 'receivedEvent'
-  // function, we must explicitly call 'app.receivedEvent(...);'
-  onDeviceReady: function() {
-    app.receivedEvent('deviceready');
-
-    //The input event is handled by onSubmit not onInput.
-    //var tableNbr = document.getElementById("input-table-nbr");
-    //tableNbr.addEventListener("input", inputTableNumber, false);
-
-    var auction = document.getElementById("auction");
-    auction.addEventListener("touchstart", handleTouch, {passive: true});
-
-    var xSpan = document.getElementById("xYourBid");
-    xSpan.addEventListener("click", removeMsgYourBid, false);
-
-    screen.orientation.lock("portrait-primary");
-    drawCompass();
-  },
-  // Update DOM on a Received Event (this is for splash screen)
-  receivedEvent: function(id) {
-    //var parentElement = document.getElementById(id);
-    //var listeningElement = parentElement.querySelector('.listening');
-    //var receivedElement = parentElement.querySelector('.received');
-
-    //listeningElement.setAttribute('style', 'display:none;');
-    //receivedElement.setAttribute('style', 'display:block;');
-
-    console.log('Received Event: ' + id);
-  }
-};
-
-// Redraw the Compass svg using current values of
-// the globals for board, table etc.
-// A refresh callable at any time (maybe even periodically)
-// Also sets input fields for seat, board, table consistently
-//
-function drawCompass() {
-  var rectTableNbr = document.getElementById("svgRectTableNbr");
-  var textTableNbr = document.getElementById("svgTextTableNbr");
-  var rectBoardNbr = document.getElementById("svgRectBoardNbr");
-  var textBoardNbr = document.getElementById("svgTextBoardNbr");
-
-  var rectNorth = document.getElementById("svgRectNorth");
-  var textNorth = document.getElementById("svgTextNorth");
-  var rectEast = document.getElementById("svgRectEast");
-  var textEast = document.getElementById("svgTextEast");
-  var rectSouth = document.getElementById("svgRectSouth");
-  var textSouth = document.getElementById("svgTextSouth");
-  var rectWest = document.getElementById("svgRectWest");
-  var textWest = document.getElementById("svgTextWest");
-
-  var tnbr = textTableNbr.textContent;
-  var bnbr = textBoardNbr.textContent;
-  var snbr = seatOrder[seatIx];
-  var north = textNorth.textContent;
-  var east = textEast.textContent;
-  var south = textSouth.textContent;
-  var west = textWest.textContent;
-
-  //console.log("drawCompass");
-  //console.log("T: %s, B: %s, N: %s, E: %s, S: %s, W: %s", tnbr, bnbr, north, east, south, west);
-  //console.log("Six: %d, Tix: %d, Bix: %d, Dix: %d, Vix: %d", seatIx, tableIx, boardIx, dealerIx, vulIx);
-  //console.log("S: %s, V: %s ", seatOrder[seatIx], vulOrder[vulIx]);
-
-  // Table Nbr and seat direction
-  tnbr = tableIx + 1;
-  textTableNbr.textContent = "Table " + tnbr + snbr;
-  document.getElementById("input-table-nbr").value = tnbr;
-
-  //Board number
-  bnbr = boardIx + 1;
-  textBoardNbr.textContent = bnbr;
-  document.getElementById("input-board-nbr").value = bnbr;
-
-  //dealer
-  if (dealerIx == 0) {
-    textNorth.textContent = "N*";
-  } else {
-    textNorth.textContent = "N";
-  }
-  if (dealerIx == 1) {
-    textEast.textContent = "E*";
-  } else {
-    textEast.textContent = "E";
-  }
-  if (dealerIx == 2) {
-    textSouth.textContent = "S*";
-  } else {
-    textSouth.textContent = "S";
-  }
-  if (dealerIx == 3) {
-    textWest.textContent = "W*";
-  } else {
-    textWest.textContent = "W";
-  }
-
-  //vulnerability
-  if (vulIx == 0) {
-    rectNorth.style.fill = nvulColor;
-    rectEast.style.fill = nvulColor;
-    rectSouth.style.fill = nvulColor;
-    rectWest.style.fill = nvulColor;
-  }
-  if (vulIx == 1) {
-    rectNorth.style.fill = vulColor;
-    rectEast.style.fill = nvulColor;
-    rectSouth.style.fill = vulColor;
-    rectWest.style.fill = nvulColor;
-  }
-  if (vulIx == 2) {
-    rectNorth.style.fill = nvulColor;
-    rectEast.style.fill = vulColor;
-    rectSouth.style.fill = nvulColor;
-    rectWest.style.fill = vulColor;
-  }
-  if (vulIx == 3) {
-    rectNorth.style.fill = vulColor;
-    rectEast.style.fill = vulColor;
-    rectSouth.style.fill = vulColor;
-    rectWest.style.fill = vulColor;
-  }
-}
-
-function handleSetup(){
+/////////////////////////////////////////////////////////////////////////////
+///////// Routine Operations //////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+function handleSetup() {
   alert("Setup");
 }
-function handleMsgToLHO(){
+function handleMsgToLHO() {
   alert("Send a Message to LHO. (Not yet available)");
 }
-function handleMsgToRHO(){
+function handleMsgToRHO() {
   alert("Send a Message to RHO. (Not yet available)");
 }
-function handleRestore(){
-  alert("Restore this Tablet to last known state?")
+function handleRestart() {
+  boardIx = 0; // Board index
+  dealerIx = 0; // Dealer; function of boardIx
+  vulIx = 0; // Vulnerability; function of boardIx
+
+  roundIx = 0; //current round of bidding
+  bidderIx = 0; //current bidder (bid order ix)
+
+  drawCompass();
+  initBiddingRecord();
+  clearBidBox();
+  //alert("Restart this Tablet with last known state?")
 }
-function handleClose(){
-  alert("Close down? This will lose all data and settings" )
+function handleClose() {
+  alert("Close down? This will lose all data and settings")
 }
 
-function handleTricks(idTricks) {
-  roundArray[bidderIx].tricks = idTricks;
-  alert(idTricks);
-}
-
-function handleSuits(idSuits) {
-  roundArray[bidderIx].suit = idSuits;
-  alert(idSuits);
-}
-
-function handleCalls(idCalls) {
-  alert(idCalls);
-}
-
-//////////////////////////////////////////////////
-// This is the event that handles input from the
-// form element table number.
-///////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//// Table, Board Number and Seat Input //////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 function submitTableNumber(event) {
   event.preventDefault(); // prevents the "submit form action"
   simulateClick(); // causes the keyboard to hide
@@ -203,7 +38,6 @@ function submitTableNumber(event) {
 }
 
 function submitBoardNumber(event) {
-  //alert("submit Board Number");
   event.preventDefault(); // prevents the "submit form action"
   simulateClick(); // causes the keyboard to hide
   handleNewBoardNumber();
@@ -218,12 +52,11 @@ function handleNewTableNumber() {
   tableIx = val - 1;
   var textAfter = svgElem.textContent;
   drawCompass();
-  //alert("handleNewTableNumber Before: " + textBefore + " After: " + textAfter);
 }
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Board Number -> dealer & vulnerability:
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // B = 1,2,...,16,17,18,...,32,...,36: Board Nbr
 // b = B - 1 (mod 16): Board index
 // {"N","E","S","W"} = {0,1,2,3}: Compass (Seat) index
@@ -293,6 +126,10 @@ function handleSeatDirection(val) {
     seatIx = 3;
   }
   drawCompass();
+
+  if (dealerIx == seatIx) {
+    promptBidder();
+  }
 }
 
 function testBoardSettings() {
@@ -315,43 +152,16 @@ function testBoardSettings() {
   }
 }
 
-//Used to cause the keyboard to hide
-function simulateClick() {
-  var event = new MouseEvent('touchstart', {
-    view: window,
-    bubbles: true,
-    cancelable: true
-  });
-  var cb = document.getElementById('auction');
-  cb.dispatchEvent(event);
-  //alert("simulate Click");
-}
-
-//The point of this is to make the soft keyboard go away.
-//After input from a <form> the system wants to 'submit' the
-//form. This is prevented by  calling preventDefault()
-//in onSubmit(), which leaves the keyboad on screen.
-//To make it go away a fake touch event is generated in the
-//auction table element. When that fires the currently active
-//input element is defocussed (blurred) and that causes the
-//keyboard to shut down.
-//
-function handleTouch() {
-  document.activeElement.blur();
-  //alert("handle touchstart");
-}
-
-///////////////////////////////////////////////////////////////
-////// Section dealing with the bids and calls ////
-///////////////////////////////////////////////////////////////
-
+///////////////////////////////////////////////////////////////////////////////
+////// Bids and Calls /////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 //
 // Call Object:
 // tricks: 0,1,....,7
-// suits: "C", "D", "H", "S", "NT" if 0 != tricks
-// suits: "empty","blank", "Pass", "X", "XX" if tricks = 0
+// suit: "C", "D", "H", "S", "NT" if 0 != tricks
+// suit: "empty" ("&nbsp;"),"blank" ("&ndash;") , "Pass", "X", "XX" if tricks = 0
 // alert: true/false except for "blank" and "empty"
-// "blank" ("-") means diagram slot empty because dealer later in rotation
+// "blank" ("&ndash;")means diagram slot empty because dealer later in rotation
 // "empty"(&nbsp;) means no bid yet
 //
 function callObj(tricks, suit, alert) {
@@ -360,9 +170,15 @@ function callObj(tricks, suit, alert) {
   this.alert = alert;
 }
 
-// Resets the bidding record by clearing all cells
-// Inserts &ndash; to left of bidOrder
-//
+///////////////////////////////////////////////////////////////////////////////
+// Reset the bidding record by clearing all cells
+// Inserts &ndash; to left of bidder
+// Set up 4 callObj's for the first round of bidding
+// Set up roundArray[0..4] with callObj's
+// Set up boardArray[0], array of rounds, with current round
+// Set up seatRecord[0] with current boardArray
+// Set up tableRecord[0] with this seatRecord
+///////////////////////////////////////////////////////////////////////////////
 function initBiddingRecord() {
   var i;
   var j;
@@ -379,48 +195,36 @@ function initBiddingRecord() {
   }
 
   //Init first round of bidding
+  roundCalls = [];
+  boardRounds = [];
+
   for (i = 0; i < 4; i++) {
-    roundArray[i] = new callObj(0, "&nbsp;", false);
+    roundCalls[i] = new callObj(0, "&nbsp;", false);
   }
 
-  if (dealerIx > 0) {
-    roundArray[0].suit = "&ndash;";
-  }
-  if (dealerIx > 1) {
-    roundArray[1].suit = "&ndash;";
-  }
-  if (dealerIx > 2) {
-    roundArray[2].suit = "&ndash;";
+  if (dealerIx != 3) {
+    if (dealerIx >= 0) {
+      roundCalls[0].suit = "&ndash;";
+    }
+    if (dealerIx >= 1) {
+      roundCalls[1].suit = "&ndash;";
+    }
+    if (dealerIx >= 2) {
+      roundCalls[2].suit = "&ndash;";
+    }
   }
 
-  console.log(roundArray);
+  boardRounds[0] = roundCalls; // board of any nbr of rounds
+  seatBoards[0] = boardRounds; // seat records, any number of boards
+  nbrBoards[0] = boardIx + 1; // board numbers (boards can be out of order)
+  tableSeats[seatIx] = seatBoards; // table has 4 seats
 
+  //First row - header is row 0. This marks dashes
   row = table.rows[1];
   for (j = 0, col; col = row.cells[j]; j++) {
-    table.rows[1].cells[j].innerHTML = roundArray[j].suit;
+    table.rows[1].cells[j].innerHTML = roundCalls[j].suit;
   }
   if (dealerIx == seatIx) {
     promptBidder();
-  }
-}
-
-////// Modal MessageBox: Your Bid ////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-function promptBidder() {
-  var msg = document.getElementById("msgYourBid");
-  msg.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-function removeMsgYourBid(){
-  var msg = document.getElementById('msgYourBid');
-  msg.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  var msg = document.getElementById('msgYourBid');
-  if (event.target == msg) {
-    msg.style.display = "none";
   }
 }

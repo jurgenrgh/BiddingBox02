@@ -8,7 +8,9 @@
    <link rel="stylesheet" type="text/css" href="css/index.css">
    <!--<link rel="stylesheet" type="text/css" href="css/splash.css">-->
    <script type="text/javascript" src="cordova.js"></script>
+   <script type="text/javascript" src="js/globals.js"></script>
    <script type="text/javascript" src="js/index.js"></script>
+   <script type="text/javascript" src="js/bidding.js"></script>
 </head>
 
 <body>
@@ -20,8 +22,6 @@
       </div>
   </div>
   -->
-
-
 
    <div class=flex-container>
       <div class=flex-top>
@@ -70,7 +70,7 @@
                <select id="seat" name="seat" onchange="handleSeatDirection(this.value)">
                 <option value="north">N</option>
                 <option value="east">E</option>
-                <option value="south">S</option>
+                <option value="south" selected>S</option>
                 <option value="west">W</option>
             </select>
             </div>
@@ -91,7 +91,7 @@
                      <button id="setup" onclick="handleSetup()">Setup</button>
                      <button id="lho" onclick="handleLHO()">&#x27A3;  LHO</button>
                      <button id="rho" onclick="handleRHO()">&#x27A3;  RHO</button>
-                     <button id="restore" onclick="handleRestore()">Restore</button>
+                     <button id="restart" onclick="handleRestart()">Restart</button>
                      <button id="close" onclick="handleClose()">Close</button>
                   </div>
                </div>
@@ -122,67 +122,71 @@
          </div>
       </div>
 
+<div class=flex-bottom>
+<!--<div class=flex-bottom>-->
       <!-- The Modal MessageBox: Your Bid -->
       <!-- Normally invisible -->
-      <div id="msgYourBid" class="modal">
+      <div id="msgBox" class="modal">
          <!-- Modal content -->
          <div class="modal-content">
-            <span id="xYourBid" class="close-msg">&times;</span>
-            <p>It's your turn: Please Bid</p>
+            <span id="xModalBox" class="close-msg">&times;</span>
+            <p id="modalMsgText">Your turn: Please Bid</p>
+            <button id="yesButton" onclick=yesButton() class="modal-button">Yes</button>
+            <button id="noButton" onclick=noButton() class="modal-button">No</button>
          </div>
       </div>
 
-      <div class=flex-bottom>
+      <!--<div class=flex-bottom>-->
          <div class=flex-tricks>
-            <div id="1" class="tricks" onClick="handleTricks(this.id)">
+            <div id="1" class="tricks" onClick="handleTricksBid(this.id)">
                <kbd>1</kbd>
             </div>
-            <div id="2" class="tricks" onClick="handleTricks(this.id)">
+            <div id="2" class="tricks" onClick="handleTricksBid(this.id)">
                <kbd>2</kbd>
             </div>
-            <div id="3" class="tricks" onClick="handleTricks(this.id)">
+            <div id="3" class="tricks" onClick="handleTricksBid(this.id)">
                <kbd>3</kbd>
             </div>
-            <div id="4" class="tricks" onClick="handleTricks(this.id)">
+            <div id="4" class="tricks" onClick="handleTricksBid(this.id)">
                <kbd>4</kbd>
             </div>
-            <div id="5" class="tricks" onClick="handleTricks(this.id)">
+            <div id="5" class="tricks" onClick="handleTricksBid(this.id)">
                <kbd>5</kbd>
             </div>
-            <div id="6" class="tricks" onClick="handleTricks(this.id)">
+            <div id="6" class="tricks" onClick="handleTricksBid(this.id)">
                <kbd>6</kbd>
             </div>
-            <div id="7" class="tricks" onClick="handleTricks(this.id)">
+            <div id="7" class="tricks" onClick="handleTricksBid(this.id)">
                <kbd>7</kbd>
             </div>
          </div>
 
          <div class=flex-suits>
-            <div id="Clubs" class="suit" onClick="handleSuits(this.id)">
+            <div id="Clubs" class="suit" onClick="handleSuitBid(this.id)">
                <kbd> <span class="clubs">&clubs;</span> </kbd>
             </div>
-            <div id="Diams" class="suit" onClick="handleSuits(this.id)">
+            <div id="Diams" class="suit" onClick="handleSuitBid(this.id)">
                <kbd> <span class="diams">&diams;</span> </kbd>
             </div>
-            <div id="Hearts" class="suit" onClick="handleSuits(this.id)">
+            <div id="Hearts" class="suit" onClick="handleSuitBid(this.id)">
                <kbd> <span class="hearts">&hearts;</span> </kbd>
             </div>
-            <div id="Spades" class="suit" onClick="handleSuits(this.id)">
+            <div id="Spades" class="suit" onClick="handleSuitBid(this.id)">
                <kbd> <span class="spades">&spades;</span> </kbd>
             </div>
-            <div id="NT" class="suit" onClick="handleSuits(this.id)">
+            <div id="NT" class="suit" onClick="handleSuitBid(this.id)">
                <kbd>NT</kbd>
             </div>
          </div>
 
          <div class=flex-calls>
-            <div id="Redouble" class="call" onClick="handleCalls(this.id)">
+            <div id="XX" class="call" onClick="handleCalls(this.id)">
                <kbd>XX</kbd>
             </div>
             <div id="Pass" class="call" onClick="handleCalls(this.id)">
                <kbd>Pass</kbd>
             </div>
-            <div id="Double" class="call" onClick="handleCalls(this.id)">
+            <div id="X" class="call" onClick="handleCalls(this.id)">
                <kbd>X</kbd>
             </div>
             <div id="Alert" class="call" onClick="handleCalls(this.id)">
