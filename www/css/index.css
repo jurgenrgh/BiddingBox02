@@ -2,9 +2,10 @@
   --main-bg-color: #26a69a;
   /*--modal-bg-color: #EF6C00;
   --modal-bg-color: #1B5E20
-  --modal-bg-color:#d50000;*/
-  --modal-bg-color:#BF360C;
-  --hilite-tricks-color: #d50000;
+  --modal-bg-color:#d50000;
+  --modal-bg-color:#BF360C;*/
+  --modal-bg-color:#4DB6AC;
+  --hilite-bid-color: #d50000;
 }
 
 html {
@@ -152,7 +153,8 @@ table, td, th {
   border: .2rem solid black;
   border-radius: .5rem;
   margin: 0.5rem;
-  font-size: 1.5rem;
+  font-size: 4rem;
+  color: white;
   padding: .5rem .25rem;
   transition: all .07s ease;
   width: 15rem;
@@ -161,28 +163,28 @@ table, td, th {
 
 
 #XX {
-  color: white;
+  /*color: white;*/
   background: #0288D1;
 }
 
 #Pass {
-  color: white;
+  /*color: white;*/
   background: #2e7d32;
 }
 
 #X {
-  color: white;
+  /*color: white;*/
   background: #d50000;
 }
 
 #Alert {
-  color: white;
+  /*color: white;*/
   background: #0288D1;
 }
 
-.hiliteTricks{
-  border: .4rem solid var(--hilite-tricks-color);
-  color:var(--hilite-tricks-color);
+.hiliteBid{
+  border: .4rem solid var(--hilite-bid-color);
+  color:var(--hilite-bid-color);
   padding: 0.8rem .3rem;
 }
 
@@ -291,12 +293,13 @@ select {
 }
 
 .modal-button {
-    background-color: #B71C1C;
-    border: none;
+    background-color: var(--main-bg-color);
+      border: .2rem solid black;
     color: black;
     padding: 15px 25px;
     text-align: center;
     font-size: 2rem;
+    font-weight: bold;
     cursor: pointer;
 }
 

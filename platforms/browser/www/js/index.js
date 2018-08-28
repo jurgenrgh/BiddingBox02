@@ -16,7 +16,7 @@ function handleRestart() {
   vulIx = 0; // Vulnerability; function of boardIx
 
   roundIx = 0; //current round of bidding
-  bidderIx = 0; //current bidder (bid order ix)
+  bidderIx = 1; //current bidder (bid order ix)
 
   drawCompass();
   initBiddingRecord();
@@ -174,10 +174,10 @@ function callObj(tricks, suit, alert) {
 // Reset the bidding record by clearing all cells
 // Inserts &ndash; to left of bidder
 // Set up 4 callObj's for the first round of bidding
-// Set up roundArray[0..4] with callObj's
-// Set up boardArray[0], array of rounds, with current round
-// Set up seatRecord[0] with current boardArray
-// Set up tableRecord[0] with this seatRecord
+// Set up roundCalls[0..4] with callObj's
+// Set up boardRounds[0], array of rounds, with current round
+// Set up seatBoards[0] with current boardArray
+// Set up tableSeats[0] with this seatRecord
 ///////////////////////////////////////////////////////////////////////////////
 function initBiddingRecord() {
   var i;
@@ -185,7 +185,7 @@ function initBiddingRecord() {
   var row;
   var col;
   roundIx = 0;
-  bidderIx = dealerIx;
+  bidderIx = (dealerIx + 1) % 4;
 
   var table = document.getElementById("auction");
   for (i = 1, row; row = table.rows[i]; i++) {
@@ -227,4 +227,15 @@ function initBiddingRecord() {
   if (dealerIx == seatIx) {
     promptBidder();
   }
+}
+
+// Adds the most recent bid to the table
+// Info comes from biddingStatus; the table entry
+// from the corresponding roundCalls and boardRounds
+function updateBiddingRecord(){
+  var nCalls = roundCalls.length;
+  var nRounds = boardRounds.length;
+  var nBoards = seatBoards.length;
+
+  
 }

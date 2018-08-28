@@ -11,16 +11,18 @@ var roundIx = 0; //current round of bidding
 var bidderIx = 0; //current bidder (bid order ix)
 
 // The state of the bidding
-// bidder: "ME", "PA", "LH", "RH", "NO"
+// lastBidder: "ME", "PA", "LH", "RH", "NO"
 // tricks: #d the level bids
 // suit: "C", "D", "H", "S", "NT", "none"
 // dbl and rdble: true/false
+// boxOpen: true/false this seat is bidding
 var biddingStatus = {
-  bidder: "NO",
+  lastBidder: "NO",
   tricks: 0,
   suit: "none",
   dbl: false,
   rdbl: false,
+  boxOpen: false,
   newTricks: 0,
   newSuit: "none",
   newCall: "none",
@@ -73,7 +75,7 @@ var app = {
     auction.addEventListener("touchstart", handleTouch, {passive: true});
 
     var xSpan = document.getElementById("xModalBox");
-    xSpan.addEventListener("click", removeModalBox, false);
+    xSpan.addEventListener("click", hidePopupBox, false);
 
     screen.orientation.lock("portrait-primary");
     drawCompass();
@@ -184,19 +186,16 @@ function drawCompass() {
 }
 
 //////////////////////////////////////////////////////////////////////
-////// Modal MessageBox: Your Bid ////////////////////////////
+////// Modal MessageBox: Your Bid ////////////////////
 //////////////////////////////////////////////////////////////////////
 function promptBidder() {
-  popupBox("Your turn: Please bid", "", "");
-  //var msg = document.getElementById("msgBox");
-  //msg.style.display = "block";
-  setTimeout(removeModalBox, 5000);
-  prepBidBox();
   getBiddingStatus();
+  prepBidBox();
+  popupBox("Your turn: Please bid", "", "", "", 5);
 }
 
 // When the user clicks on <span> (x), close the modal
-function removeModalBox() {
+function hidePopupBox() {
   var msg = document.getElementById('msgBox');
   msg.style.display = "none";
 }
@@ -212,7 +211,7 @@ window.onclick = function(event) {
 // The popup messageBox is called with a text
 // and 2 buttons. The buttons appear only if
 // the text argument is not blank
-function popupBox(msgText, yesButtonText, noButtonText) {
+function popupBox(msgText, yesButtonText, noButtonText, doButtonText, timeout) {
   var msg = document.getElementById("msgBox");
   msg.style.display = "block"; //make it visible
 
@@ -233,6 +232,19 @@ function popupBox(msgText, yesButtonText, noButtonText) {
     bNo.style.visibility = "visible";
   } else {
     bNo.style.visibility = "hidden";
+  }
+
+  var bDo = document.getElementById("doButton");
+  if (doButtonText != "") {
+    bDo.innerHTML = doButtonText;
+    bDo.style.visibility = "visible";
+  } else {
+    bDo.style.visibility = "hidden";
+  }
+  //timeout in ms
+  if (timeout > 0) {
+    timeout = timeout * 1000;
+    setTimeout(hidePopupBox, timeout);
   }
 }
 
@@ -263,58 +275,128 @@ function handleTouch() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//Disable and grey out the bids and calls individually ///////////////////
+//Disable and grey out the bids and calls individually ///////////
 //////////////////////////////////////////////////////////////////////////////
 function disableTricksBid(idTricks) {
   var targetDiv = document.getElementById(idTricks);
-  targetDiv.classList.add("disabled");
-  //console.log("disabled: ", idTricks);
+  if (targetDiv != null) {
+    targetDiv.classList.add("disabled");
+  }
 }
 
 function enableTricksBid(idTricks) {
   var targetDiv = document.getElementById(idTricks);
-  targetDiv.classList.remove("disabled");
-  //console.log("enabled: ", idTricks);
+  if (targetDiv != null) {
+    targetDiv.classList.remove("disabled");
+  }
 }
 
 function disableSuitBid(idSuit) {
   var targetDiv = document.getElementById(idSuit);
-  targetDiv.classList.add("disabled");
-  //console.log("disabled: ", idSuit);
+  if (targetDiv != null) {
+
+    targetDiv.classList.add("disabled");
+  }
 }
 
 function enableSuitBid(idSuit) {
   var targetDiv = document.getElementById(idSuit);
-  targetDiv.classList.remove("disabled");
-  //console.log("enabled: ", idSuit);
+  if (targetDiv != null) {
+    targetDiv.classList.remove("disabled");
+  }
 }
 
 function disableCall(idCall) {
   var targetDiv = document.getElementById(idCall);
-  targetDiv.classList.add("disabled");
-  //console.log("disabled: ", idCall);
+  if (targetDiv != null) {
+    targetDiv.classList.add("disabled");
+  }
 }
 
 function enableCall(idCall) {
   var targetDiv = document.getElementById(idCall);
-  targetDiv.classList.remove("disabled");
-  //console.log("enabled: ", idCall);
+  if (targetDiv != null) {
+    targetDiv.classList.remove("disabled");
+  }
 }
 
 function selectTricksBid(idTricks) {
   var targetDiv = document.getElementById(idTricks);
-  targetDiv.classList.add("hiliteTricks");
+  if (targetDiv != null) {
+    targetDiv.classList.add("hiliteBid");
+  }
 }
 
 function unselectTricksBid(idTricks) {
   var targetDiv = document.getElementById(idTricks);
-  targetDiv.classList.remove("hiliteTricks");
+  if (targetDiv != null) {
+    targetDiv.classList.remove("hiliteBid");
+  }
+}
+function selectSuitBid(idSuit) {
+  var targetDiv = document.getElementById(idSuit);
+  if (targetDiv != null) {
+    targetDiv.classList.add("hiliteBid");
+  }
 }
 
+function unselectSuitBid(idSuit) {
+  var targetDiv = document.getElementById(idSuit);
+  if (targetDiv != null) {
+    targetDiv.classList.remove("hiliteBid");
+  }
+}
+function selectCall(idCall) {
+  var targetDiv = document.getElementById(idCall);
+  if (targetDiv != null) {
+    targetDiv.classList.add("hiliteBid");
+  }
+}
+
+function unselectCall(idCall) {
+  var targetDiv = document.getElementById(idCall);
+  if (targetDiv != null) {
+    targetDiv.classList.remove("hiliteBid");
+  }
+}
+
+function setPopupValue(val) {
+  var yb = document.getElementById("yesButton");
+  yb.value = val;
+  var nb = document.getElementById("noButton");
+  nb.value = val;
+  var db = document.getElementById("doButton");
+  db.value = val;
+}
+
+//The button value is set when the popupbox is opened
+//It identifies the required action
 function yesButton() {
-  alert("Yes was clicked");
+  var b = document.getElementById("yesButton");
+  var t = b.innerHTML;
+  var val = b.value;
+
+  if (val == "PassCall") {
+    confirmPassCall();
+  }
 }
 
 function noButton() {
-  alert("No was clicked");
+  var b = document.getElementById("noButton");
+  var t = b.innerHTML;
+  var val = b.value;
+
+  if (val == "PassCall") {
+    undoPassCall();
+  }
+}
+
+function doButton() {
+  var b = document.getElementById("doButton");
+  var t = b.innerHTML;
+  var val = b.value;
+
+  if (val == "PassCall") {
+    alertPassCall();
+  }
 }

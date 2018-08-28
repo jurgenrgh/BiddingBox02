@@ -131,8 +131,9 @@
          <div class="modal-content">
             <span id="xModalBox" class="close-msg">&times;</span>
             <p id="modalMsgText">Your turn: Please Bid</p>
-            <button id="yesButton" onclick=yesButton() class="modal-button">Yes</button>
-            <button id="noButton" onclick=noButton() class="modal-button">No</button>
+            <button id="yesButton" onclick=yesButton(this.id) value="yesButton" class="modal-button">Yes</button>
+            <button id="noButton" onclick=noButton(this.id) value="noButton" class="modal-button">No</button>
+            <button id="doButton" onclick=doButton(this.id) value="doButton" class="modal-button">Do</button>
          </div>
       </div>
 
