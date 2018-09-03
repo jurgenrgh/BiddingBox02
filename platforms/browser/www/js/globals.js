@@ -1,6 +1,7 @@
 //////////////////////////////////////////////
 //Global Variables
-var seatIx = 2; // Seat of this tablet
+//
+var seatIx = 1; // Seat of this tablet
 var tableIx = 0; // Table of this tablet
 
 var boardIx = 0; // Board index
@@ -16,7 +17,7 @@ var bidderIx = 0; //current bidder (bid order ix)
 // suit: "C", "D", "H", "S", "NT", "none"
 // dbl and rdble: true/false
 // boxOpen: true/false this seat is bidding
-var biddingStatus = {
+var bStat = {
   lastBidder: "NO",
   tricks: 0,
   suit: "none",
@@ -45,8 +46,16 @@ var modalBGColor = '#bf360C';
 var vulColor = '#d50000';
 var nvulColor = '#2e7d32';
 
-//The following is copied from the PhoneGap HelloWorld example
+var popupTimeOutRunning;
+/////// End of global variables ///////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+//The following was copied from the PhoneGap HelloWorld example
 //It waits for device ready and then does nothing but console.log
+//
+// Possibly there should be a splash screen here while loading
+// so the user can't initiate any action until the system is ready
+//
 var app = {
   // Application Constructor
   initialize: function() {
@@ -71,19 +80,27 @@ var app = {
     //var tableNbr = document.getElementById("input-table-nbr");
     //tableNbr.addEventListener("input", inputTableNumber, false);
 
+/////// Event Listeners ///////////////////////////////////////////////////////
+//
     var auction = document.getElementById("auction");
     auction.addEventListener("touchstart", handleTouch, {passive: true});
 
     var xSpan = document.getElementById("xModalBox");
     xSpan.addEventListener("click", hidePopupBox, false);
+    xSpan = document.getElementById("xModalBoxOK");
+    xSpan.addEventListener("click", hidePopupBox, false);
+    xSpan = document.getElementById("xModalBoxYesNo");
+    xSpan.addEventListener("click", hidePopupBox, false);
 
     screen.orientation.lock("portrait-primary");
+
+    // Actual app Initialization //////////////////////////////////////////////
     drawCompass();
-    //console.log("drawCompass done");
-    initBiddingRecord();
-    //console.log("initBidding done");
+    drawBiddingRecordTable();
+    console.log("init before clearbox");
     clearBidBox();
-    //console.log("clearBidBox done");
+    console.log("init after clearbox");
+    initBiddingRecord();
   },
   // Update DOM on a Received Event (this is for splash screen)
   receivedEvent: function(id) {
@@ -126,10 +143,13 @@ function drawCompass() {
   var south = textSouth.textContent;
   var west = textWest.textContent;
 
+  //console.log("drawCompass", tableIx, boardIx, dealerIx, vulIx );
+
   // Table Nbr and seat direction
   tnbr = tableIx + 1;
   textTableNbr.textContent = "Table " + tnbr + seat;
   document.getElementById("input-table-nbr").value = tnbr;
+  document.getElementById("input-seat").value = seat;
 
   //Board number
   bnbr = boardIx + 1;
@@ -185,66 +205,11 @@ function drawCompass() {
   }
 }
 
-//////////////////////////////////////////////////////////////////////
-////// Modal MessageBox: Your Bid ////////////////////
-//////////////////////////////////////////////////////////////////////
-function promptBidder() {
-  getBiddingStatus();
-  prepBidBox();
-  popupBox("Your turn: Please bid", "", "", "", 5);
-}
-
-// When the user clicks on <span> (x), close the modal
-function hidePopupBox() {
-  var msg = document.getElementById('msgBox');
-  msg.style.display = "none";
-}
-
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   var msg = document.getElementById('msgBox');
   if (event.target == msg) {
     msg.style.display = "none";
-  }
-}
-
-// The popup messageBox is called with a text
-// and 2 buttons. The buttons appear only if
-// the text argument is not blank
-function popupBox(msgText, yesButtonText, noButtonText, doButtonText, timeout) {
-  var msg = document.getElementById("msgBox");
-  msg.style.display = "block"; //make it visible
-
-  var txt = document.getElementById("modalMsgText");
-  txt.innerHTML = msgText;
-
-  var bYes = document.getElementById("yesButton");
-  if (yesButtonText != "") {
-    bYes.innerHTML = yesButtonText;
-    bYes.style.visibility = "visible";
-  } else {
-    bYes.style.visibility = "hidden";
-  }
-
-  var bNo = document.getElementById("noButton");
-  if (noButtonText != "") {
-    bNo.innerHTML = noButtonText;
-    bNo.style.visibility = "visible";
-  } else {
-    bNo.style.visibility = "hidden";
-  }
-
-  var bDo = document.getElementById("doButton");
-  if (doButtonText != "") {
-    bDo.innerHTML = doButtonText;
-    bDo.style.visibility = "visible";
-  } else {
-    bDo.style.visibility = "hidden";
-  }
-  //timeout in ms
-  if (timeout > 0) {
-    timeout = timeout * 1000;
-    setTimeout(hidePopupBox, timeout);
   }
 }
 
@@ -257,10 +222,9 @@ function simulateClick() {
   });
   var cb = document.getElementById('auction');
   cb.dispatchEvent(event);
-  //alert("simulate Click");
 }
 
-//The point of this is to make the soft keyboard go away.
+//The point of handleTouch is to make the soft keyboard go away.
 //After input from a <form> the system wants to 'submit' the
 //form. This is prevented by  calling preventDefault()
 //in onSubmit(), which leaves the keyboad on screen.
@@ -271,132 +235,46 @@ function simulateClick() {
 //
 function handleTouch() {
   document.activeElement.blur();
-  //alert("handle touchstart");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //Disable and grey out the bids and calls individually ///////////
 //////////////////////////////////////////////////////////////////////////////
-function disableTricksBid(idTricks) {
-  var targetDiv = document.getElementById(idTricks);
-  if (targetDiv != null) {
-    targetDiv.classList.add("disabled");
-  }
-}
-
-function enableTricksBid(idTricks) {
+function enableBidButton(idTricks) {
   var targetDiv = document.getElementById(idTricks);
   if (targetDiv != null) {
     targetDiv.classList.remove("disabled");
   }
 }
 
-function disableSuitBid(idSuit) {
-  var targetDiv = document.getElementById(idSuit);
-  if (targetDiv != null) {
-
-    targetDiv.classList.add("disabled");
-  }
-}
-
-function enableSuitBid(idSuit) {
-  var targetDiv = document.getElementById(idSuit);
-  if (targetDiv != null) {
+//enable only suits higher ranking or same as argument
+function enableHigherSuitBids(ixSuit){
+  for( var i = ixSuit; i < 5; i++ ){
+    var targetDiv = document.getElementById(suitNameOrder[i]);
     targetDiv.classList.remove("disabled");
   }
 }
 
-function disableCall(idCall) {
-  var targetDiv = document.getElementById(idCall);
+function disableBidButton(idTricks) {
+  var targetDiv = document.getElementById(idTricks);
   if (targetDiv != null) {
     targetDiv.classList.add("disabled");
   }
 }
 
-function enableCall(idCall) {
-  var targetDiv = document.getElementById(idCall);
-  if (targetDiv != null) {
-    targetDiv.classList.remove("disabled");
-  }
-}
-
-function selectTricksBid(idTricks) {
+///////////////////////////////////////////////////////////////////////////////
+// Select means highlight the provisional choice
+//
+function selectBidButton(idTricks) {
   var targetDiv = document.getElementById(idTricks);
   if (targetDiv != null) {
     targetDiv.classList.add("hiliteBid");
   }
 }
 
-function unselectTricksBid(idTricks) {
+function unselectBidButton(idTricks) {
   var targetDiv = document.getElementById(idTricks);
   if (targetDiv != null) {
     targetDiv.classList.remove("hiliteBid");
-  }
-}
-function selectSuitBid(idSuit) {
-  var targetDiv = document.getElementById(idSuit);
-  if (targetDiv != null) {
-    targetDiv.classList.add("hiliteBid");
-  }
-}
-
-function unselectSuitBid(idSuit) {
-  var targetDiv = document.getElementById(idSuit);
-  if (targetDiv != null) {
-    targetDiv.classList.remove("hiliteBid");
-  }
-}
-function selectCall(idCall) {
-  var targetDiv = document.getElementById(idCall);
-  if (targetDiv != null) {
-    targetDiv.classList.add("hiliteBid");
-  }
-}
-
-function unselectCall(idCall) {
-  var targetDiv = document.getElementById(idCall);
-  if (targetDiv != null) {
-    targetDiv.classList.remove("hiliteBid");
-  }
-}
-
-function setPopupValue(val) {
-  var yb = document.getElementById("yesButton");
-  yb.value = val;
-  var nb = document.getElementById("noButton");
-  nb.value = val;
-  var db = document.getElementById("doButton");
-  db.value = val;
-}
-
-//The button value is set when the popupbox is opened
-//It identifies the required action
-function yesButton() {
-  var b = document.getElementById("yesButton");
-  var t = b.innerHTML;
-  var val = b.value;
-
-  if (val == "PassCall") {
-    confirmPassCall();
-  }
-}
-
-function noButton() {
-  var b = document.getElementById("noButton");
-  var t = b.innerHTML;
-  var val = b.value;
-
-  if (val == "PassCall") {
-    undoPassCall();
-  }
-}
-
-function doButton() {
-  var b = document.getElementById("doButton");
-  var t = b.innerHTML;
-  var val = b.value;
-
-  if (val == "PassCall") {
-    alertPassCall();
   }
 }

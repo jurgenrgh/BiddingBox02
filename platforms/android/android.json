@@ -1,0 +1,61 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"ExitApp\"><param name=\"android-package\" value=\"cordova.custom.plugins.exitapp.ExitApp\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "res/xml/config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"Exit\"><param name=\"android-package\" value=\"im.ckk.cordova.exit\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "cordova.custom.plugins.exitapp": {
+            "PACKAGE_NAME": "com.phonegap.biddingbox02"
+        },
+        "cordova-plugin-exit": {
+            "PACKAGE_NAME": "com.phonegap.biddingbox02"
+        }
+    },
+    "dependent_plugins": {},
+    "modules": [
+        {
+            "id": "cordova.custom.plugins.exitapp.exitApp",
+            "file": "plugins/cordova.custom.plugins.exitapp/www/ExitApp.js",
+            "pluginId": "cordova.custom.plugins.exitapp",
+            "merges": [
+                "navigator.app"
+            ]
+        },
+        {
+            "id": "cordova-plugin-exit.exit",
+            "file": "plugins/cordova-plugin-exit/www/exit.js",
+            "pluginId": "cordova-plugin-exit",
+            "clobbers": [
+                "cordova.plugins.exit"
+            ]
+        }
+    ],
+    "plugin_metadata": {
+        "cordova.custom.plugins.exitapp": "1.0.0",
+        "cordova-plugin-exit": "1.0.2"
+    }
+}

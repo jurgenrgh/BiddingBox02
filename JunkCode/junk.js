@@ -97,3 +97,88 @@ function handleNewSeat(val) {
                   <td> 1<span class="spades">&spades;</span> </td>
                   <td>P</td>
                </tr>
+
+               function confirmCall() {
+                 console.log("Confirm Call");
+                 console.log(bStat);
+                 hidePopupBox();
+                 clearBidBox();
+                 updateBiddingRecord();
+               }
+
+               function undoCall() {
+                 console.log("Undo Call");
+                 console.log(bStat);
+                 hidePopupBox();
+                 bStat.boxOpen = true;
+                 bStat.newTricks = 0;
+                 bStat.newSuit = "none";
+                 bStat.newCall = "none";
+                 bStat.newAlert = false;
+                 prepBidBox();
+               }
+
+               function alertCall() {
+                 console.log("Alert Call");
+                 console.log(bStat);
+                 bStat.newAlert = true;
+                 hidePopupBox();
+                 clearBidBox();
+                 updateBiddingRecord();
+               }
+
+               function disableSuitBid(idSuit) {
+                 var targetDiv = document.getElementById(idSuit);
+                 if (targetDiv != null) {
+                   targetDiv.classList.add("disabled");
+                 }
+               }
+
+               function enableSuitBid(idSuit) {
+                 var targetDiv = document.getElementById(idSuit);
+                 if (targetDiv != null) {
+                   targetDiv.classList.remove("disabled");
+                 }
+               }
+
+               function disableCall(idCall) {
+                 var targetDiv = document.getElementById(idCall);
+                 if (targetDiv != null) {
+                   targetDiv.classList.add("disabled");
+                 }
+               }
+
+               function enableCall(idCall) {
+                 var targetDiv = document.getElementById(idCall);
+                 if (targetDiv != null) {
+                   targetDiv.classList.remove("disabled");
+                 }
+               }
+
+               function selectSuitBid(idSuit) {
+                 var targetDiv = document.getElementById(idSuit);
+                 if (targetDiv != null) {
+                   targetDiv.classList.add("hiliteBid");
+                 }
+               }
+
+               function unselectSuitBid(idSuit) {
+                 var targetDiv = document.getElementById(idSuit);
+                 if (targetDiv != null) {
+                   targetDiv.classList.remove("hiliteBid");
+                 }
+               }
+
+               function selectCall(idCall) {
+                 var targetDiv = document.getElementById(idCall);
+                 if (targetDiv != null) {
+                   targetDiv.classList.add("hiliteBid");
+                 }
+               }
+
+               function unselectCall(idCall) {
+                 var targetDiv = document.getElementById(idCall);
+                 if (targetDiv != null) {
+                   targetDiv.classList.remove("hiliteBid");
+                 }
+               }

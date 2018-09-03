@@ -1,0 +1,18 @@
+{
+  "cordova.custom.plugins.exitapp": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-exitapp"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-exit": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-exit@^1.0.2"
+    },
+    "is_top_level": true,
+    "variables": {}
+  }
+}

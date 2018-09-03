@@ -10,7 +10,9 @@
    <script type="text/javascript" src="cordova.js"></script>
    <script type="text/javascript" src="js/globals.js"></script>
    <script type="text/javascript" src="js/index.js"></script>
-   <script type="text/javascript" src="js/bidding.js"></script>
+   <script type="text/javascript" src="js/box.js"></script>
+   <script type="text/javascript" src="js/popupbox.js"></script>
+   <script type="text/javascript" src="js/record.js"></script>
 </head>
 
 <body>
@@ -22,30 +24,58 @@
       </div>
   </div>
   -->
+   <!-- The Modal MessageBox: Your Bid -->
+   <!-- Normally invisible -->
+   <div id="msgBox" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+         <span id="xModalBox" class="close-msg">&times;</span>
+         <p id="modalMsgText">Message Box Text</p>
+      </div>
+   </div>
+
+   <div id="msgBoxOK" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+         <span id="xModalBoxOK" class="close-msg">&times;</span>
+         <p id="modalMsgTextOK">OK Message Box Text</p>
+         <button id="okButton" onclick=okButtonAction(this.id) value="okButton" class="modal-button">OK</button>
+      </div>
+   </div>
+
+   <div id="msgBoxYesNo" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+         <span id="xModalBoxYesNo" class="close-msg">&times;</span>
+         <p id="modalMsgTextYesNo">Yes/No Message Box Text</p>
+         <button id="yesButton" onclick=yesButtonAction(this.id) value="yesButton" class="modal-button">Yes</button>
+         <button id="noButton" onclick=noButtonAction(this.id) value="noButton" class="modal-button">No</button>
+      </div>
+   </div>
 
    <div class=flex-container>
       <div class=flex-top>
          <div class=flex-menu>
-            <svg width="120" height="150">
+            <svg width="160" height="200" viewbox="0 0 120 150">
                 <g>
                   <rect x="0" y="0" width="120" height="30" style="fill-opacity: 0; stroke-width:1;stroke:black" id="svgRectTableNbr" />
-                  <text id="svgTextTableNbr" x="50%" y="17.5" font-size="2.5rem" alignment-baseline="middle" text-anchor="middle">Table 7</text>
+                  <text id="svgTextTableNbr" x="50%" y="17.5" font-size="2.5rem" alignment-baseline="middle" text-anchor="middle">Table 1N</text>
                 </g>
                 <g transform="translate(0,30)">
                   <g>
                     <rect x="30" y="30" width="60" height="60" style="fill-opacity: 0; stroke-width:0;stroke:black" id="svgRectBoardNbr"/>
-                    <text id="svgTextBoardNbr" x="50%" y="62.5" font-size="3rem" alignment-baseline="middle" text-anchor="middle">36</text>
+                    <text id="svgTextBoardNbr" x="50%" y="62.5" font-size="3rem" alignment-baseline="middle" text-anchor="middle">1</text>
                   </g>
                   <g>
-                    <polygon points="0,0 120,0 90,30 30,30" style="fill:#d50000;stroke:black;stroke-width:0" id="svgRectNorth"/>
-                    <text id="svgTextNorth" x="50%" y="17.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">N</text>
+                    <polygon points="0,0 120,0 90,30 30,30" style="fill:#2e7d32;stroke:black;stroke-width:0" id="svgRectNorth"/>
+                    <text id="svgTextNorth" x="50%" y="17.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">N*</text>
                   </g>
                   <g>
                     <polygon points="120,0 120,120 90,90 90,30" style="fill:#2e7d32;stroke:black;stroke-width:0" id="svgRectEast"/>
                     <text id="svgTextEast" x="87.5%" y="62.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">E</text>
                   </g>
                   <g>
-                    <polygon points="0,120 120,120 90,90 30,90" style="fill:#d50000;stroke:black;stroke-width:0" id="svgRectSouth"/>
+                    <polygon points="0,120 120,120 90,90 30,90" style="fill:#2e7d32;stroke:black;stroke-width:0" id="svgRectSouth"/>
                     <text id="svgTextSouth" x="50%" y="107.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">S</text>
                   </g>
                   <g>
@@ -66,12 +96,12 @@
 
             <!--form onsubmit="submitSeatDirection(event)" action="javascript:void(0);">-->
             <div class="btn-group">
-               <label for="seat">Seat</label>
-               <select id="seat" name="seat" onchange="handleSeatDirection(this.value)">
-                <option value="north">N</option>
-                <option value="east">E</option>
-                <option value="south" selected>S</option>
-                <option value="west">W</option>
+               <label for="input-seat">Seat</label>
+               <select id="input-seat" name="input-seat" onchange="handleSeatDirection(this.value)">
+                <option value="N">&nbsp; N</option>
+                <option value="E">&nbsp; E</option>
+                <option value="S" selected>&nbsp; S</option>
+                <option value="W">&nbsp; W</option>
             </select>
             </div>
             <!--</form>-->
@@ -92,7 +122,7 @@
                      <button id="lho" onclick="handleLHO()">&#x27A3;  LHO</button>
                      <button id="rho" onclick="handleRHO()">&#x27A3;  RHO</button>
                      <button id="restart" onclick="handleRestart()">Restart</button>
-                     <button id="close" onclick="handleClose()">Close</button>
+                     <button id="nextseat" onclick="handleNextSeat()">Next Seat</button>
                   </div>
                </div>
             </form>
@@ -112,32 +142,12 @@
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>
                </tr>
-               <tr>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-               </tr>
             </table>
          </div>
       </div>
 
-<div class=flex-bottom>
-<!--<div class=flex-bottom>-->
-      <!-- The Modal MessageBox: Your Bid -->
-      <!-- Normally invisible -->
-      <div id="msgBox" class="modal">
-         <!-- Modal content -->
-         <div class="modal-content">
-            <span id="xModalBox" class="close-msg">&times;</span>
-            <p id="modalMsgText">Your turn: Please Bid</p>
-            <button id="yesButton" onclick=yesButton(this.id) value="yesButton" class="modal-button">Yes</button>
-            <button id="noButton" onclick=noButton(this.id) value="noButton" class="modal-button">No</button>
-            <button id="doButton" onclick=doButton(this.id) value="doButton" class="modal-button">Do</button>
-         </div>
-      </div>
+      <div class=flex-bottom>
 
-      <!--<div class=flex-bottom>-->
          <div class=flex-tricks>
             <div id="1" class="tricks" onClick="handleTricksBid(this.id)">
                <kbd>1</kbd>
@@ -191,7 +201,11 @@
                <kbd>X</kbd>
             </div>
             <div id="Alert" class="call" onClick="handleCalls(this.id)">
-               <kbd>Alert</kbd>
+               <kbd>A!</kbd>
+            </div>
+            <div id="Submit" class="call" onClick="handleSubmitCall()">
+               <!--<kbd><img src="img/check3.png" style='height: 50%; width: 50%; object-fit: contain'/> <img/></kbd>-->
+               <kbd>&#x2714;</kbd>
             </div>
          </div>
       </div>

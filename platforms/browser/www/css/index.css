@@ -1,11 +1,15 @@
 :root{
   --main-bg-color: #26a69a;
-  /*--modal-bg-color: #EF6C00;
-  --modal-bg-color: #1B5E20
-  --modal-bg-color:#d50000;
-  --modal-bg-color:#BF360C;*/
-  --modal-bg-color:#4DB6AC;
-  --hilite-bid-color: #d50000;
+  /*--modal-bg-color: #EF6C00;*/
+  /*--modal-bg-color: #1B5E20;*/
+  /*--modal-bg-color:#d50000;*/
+  /*--modal-bg-color:#BF360C;*/
+  /*--modal-bg-color:#4DB6AC;*/
+  /*--modal-bg-color:  #1E88E5;*/
+  --modal-bg-color: #C5E1A5;
+
+  /*--hilite-bid-color: #d50000;*/
+  --hilite-bid-color:#1A237E;
 }
 
 html {
@@ -32,7 +36,7 @@ h1 {
 
 kbd {
   display: block;
-  font-size: 4rem;
+  font-size: 3rem;
 }
 
 .flex-container {
@@ -63,7 +67,7 @@ kbd {
 
 table {
   font-family: arial, sans-serif;
-  font-size: 3rem;
+  font-size: 2rem;
   border-collapse: collapse;
   table-layout: fixed;
   width 100%;
@@ -76,47 +80,53 @@ table, td, th {
   padding: 4px;
 }
 
+td {
+  height: 3rem;
+}
+
 .flex-bottom {
   display: flex;
   flex-flow: column;
 }
 
-
-
 .flex-tricks {
   display: flex;
   flex-flow: row;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .tricks {
   border: .2rem solid black;
   border-radius: .5rem;
-  margin: 0.5rem;
+  margin: 0.3rem;
   font-size: 1.5rem;
   padding: 1rem .5rem;
-  transition: all .07s ease;
+  /*transition: all .07s ease;*/
   width: 10rem;
   text-align: center;
   color: black;
   background: rgba(1, 1, 1, 0);
+  box-sizing: border-box;
 }
 
 .flex-suits {
   display: flex;
   flex-flow: row;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .suit {
   border: .2rem solid black;
   border-radius: .5rem;
-  margin: 0.5rem;
+  margin: 0.3rem;
   font-size: 1.5rem;
-  padding: .5rem .25rem;
-  transition: all .07s ease;
+  padding: 1rem .5rem;
+  /*transition: all .07s ease;*/
   width: 10rem;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .clubs {
@@ -147,18 +157,20 @@ table, td, th {
   display: flex;
   flex-flow: row;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .call {
   border: .2rem solid black;
   border-radius: .5rem;
-  margin: 0.5rem;
+  margin: 0.3rem;
   font-size: 4rem;
   color: white;
-  padding: .5rem .25rem;
-  transition: all .07s ease;
-  width: 15rem;
+  padding: 1rem .2rem;
+  /*transition: all .07s ease;*/
+  width: 10rem;
   text-align: center;
+  box-sizing: border-box;
 }
 
 
@@ -182,10 +194,16 @@ table, td, th {
   background: #0288D1;
 }
 
+#Submit {
+  /*color: white;*/
+  background: #2e7d32;
+}
+
 .hiliteBid{
-  border: .4rem solid var(--hilite-bid-color);
+  border: .6rem solid var(--hilite-bid-color);
   color:var(--hilite-bid-color);
-  padding: 0.8rem .3rem;
+  padding: 0.4rem .3rem;
+  box-sizing: border-box;
 }
 
 /*****************************************************/
@@ -194,13 +212,13 @@ table, td, th {
 .btn-group button {
   background-color: transparent;
   border: 1px solid black;
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 2rem;
+  font-weight: normal;
   color: black;
   padding: 10px 16px;
   margin-top: 2px;
   cursor: pointer;
-  width: 120px;
+  width: 160px;
   display: block;
 }
 
@@ -209,14 +227,14 @@ table, td, th {
   display: block;
   background-color: transparent;
   /*border: 1px solid black;*/
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 2rem;
+  font-weight: normal;
   color: black;
   padding: 10px 10px 10px 2px;
   margin-top: 2px;
   margin-bottom: 2px;
   cursor: pointer;
-  width: 60px;
+  width: 80px;
   float: left;
   text-align: left;
 }
@@ -225,20 +243,20 @@ input[type="number"] {
   display: block;
   background-color: var(--main-bg-color);
   border: 1px solid black;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
   color: black;
   margin-top: 4px;
   cursor: pointer;
   text-align: center;
-  width: 46px;
-  height: 36px;
+  width: 66px;
+  height: 48px;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
    opacity: 0.3;
-   height: 36px;
+   height: 48px;
 }
 
 
@@ -246,14 +264,14 @@ select {
   display: block;
   background-color: var(--main-bg-color);
   border: 1px solid black;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
   color: black;
   margin-top: 4px;
   cursor: pointer;
   text-align: center;
-  width: 46px;
-  height: 36px;
+  width: 67px;
+  height: 48px;
 }
 
 /* Add a background color on hover */
@@ -268,15 +286,14 @@ select {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
-    /*padding-top: 50%; /* Location of the box */*/
-
+    padding-top: 58vh; /* Location of the box */
+    padding-left: 10vw;
     left: 0;
-    top: 50%;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
+    top: 0;
+    width: 100vw;
+    height: 100vh; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    /*background-color: rgb(0,0,0); /* Fallback color */*/
-    /*background-color: rgba(0,0,0,0.4); /* Black w/ opacity */*/
+    background-color: transparent;
 }
 
 /* Modal Content */
@@ -288,7 +305,6 @@ select {
     color: black;
     margin: auto;
     padding: 10px;
-    /*border: 1px solid #888;*/
     width: 50%;
 }
 

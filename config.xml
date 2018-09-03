@@ -9,4 +9,23 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <engine name="android" spec="~7.0.0" />
+    <engine name="ios" spec="~4.5.5" />
+    <engine name="browser" spec="~5.0.4" />
+    <plugin name="cordova-plugin-exit" spec="^1.0.2" />
 </widget>
+<platform name="android">
+        <!--
+            ldpi    : 36x36 px
+            mdpi    : 48x48 px
+            hdpi    : 72x72 px
+            xhdpi   : 96x96 px
+            xxhdpi  : 144x144 px
+            xxxhdpi : 192x192 px
+        -->
+        <icon src="res/mipmap-mdpi/ic_launcher.png" density="mdpi" />
+        <icon src="res/mipmap-hdpi/ic_launcher.png" density="hdpi" />
+        <icon src="res/mipmap-xhdpi/ic_launcher.png" density="xhdpi" />
+        <icon src="res/mipmap-xxhdpi/ic_launcher.png" density="xxhdpi" />
+        <icon src="res/mipmap-xxxhdpi/ic_launcher.png" density="xxxhdpi" />
+</platform>

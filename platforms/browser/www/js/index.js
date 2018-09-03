@@ -1,15 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////
-///////// Routine Operations //////////////////////////////////////////
+///////// Routine Operations //////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 function handleSetup() {
-  alert("Setup");
+  alert("General Setup. Will handle Table, Seat " +
+  "and possibly board series assignment. Also " +
+  "any other settings not under control of the player. " +
+  "A protected director function. Not implemented");
 }
-function handleMsgToLHO() {
-  alert("Send a Message to LHO. (Not yet available)");
+
+function handleLHO() {
+  alert("Send a Message to LHO: Not implemented");
 }
-function handleMsgToRHO() {
-  alert("Send a Message to RHO. (Not yet available)");
+
+function handleRHO() {
+  alert("Send a Message to RHO: Not implemented");
 }
+
 function handleRestart() {
   boardIx = 0; // Board index
   dealerIx = 0; // Dealer; function of boardIx
@@ -18,17 +24,19 @@ function handleRestart() {
   roundIx = 0; //current round of bidding
   bidderIx = 1; //current bidder (bid order ix)
 
+  console.log("restart");
   drawCompass();
-  initBiddingRecord();
   clearBidBox();
-  //alert("Restart this Tablet with last known state?")
+  initBiddingRecord();
 }
-function handleClose() {
-  alert("Close down? This will lose all data and settings")
+
+//Rotate the direction where tablet is located
+function handleNextSeat() {
+  alert("next seat");
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//// Table, Board Number and Seat Input //////////////////////////////////
+//// Table, Board Number and Seat Input //////////////////
 //////////////////////////////////////////////////////////////////////////////
 function submitTableNumber(event) {
   event.preventDefault(); // prevents the "submit form action"
@@ -113,22 +121,23 @@ function handleNewBoardNumber() {
 //val is option value
 function handleSeatDirection(val) {
   //alert("handleSeatDirection");
-  if (val == "north") {
+  if (val == "N") {
     seatIx = 0;
   }
-  if (val == "east") {
+  if (val == "E") {
     seatIx = 1;
   }
-  if (val == "south") {
+  if (val == "S") {
     seatIx = 2;
   }
-  if (val == "west") {
+  if (val == "W") {
     seatIx = 3;
   }
   drawCompass();
 
   if (dealerIx == seatIx) {
     promptBidder();
+    console.log("prompt in handleSeatDirection");
   }
 }
 
@@ -152,90 +161,10 @@ function testBoardSettings() {
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-////// Bids and Calls /////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-//
-// Call Object:
-// tricks: 0,1,....,7
-// suit: "C", "D", "H", "S", "NT" if 0 != tricks
-// suit: "empty" ("&nbsp;"),"blank" ("&ndash;") , "Pass", "X", "XX" if tricks = 0
-// alert: true/false except for "blank" and "empty"
-// "blank" ("&ndash;")means diagram slot empty because dealer later in rotation
-// "empty"(&nbsp;) means no bid yet
-//
-function callObj(tricks, suit, alert) {
-  this.tricks = tricks;
-  this.suit = suit;
-  this.alert = alert;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Reset the bidding record by clearing all cells
-// Inserts &ndash; to left of bidder
-// Set up 4 callObj's for the first round of bidding
-// Set up roundCalls[0..4] with callObj's
-// Set up boardRounds[0], array of rounds, with current round
-// Set up seatBoards[0] with current boardArray
-// Set up tableSeats[0] with this seatRecord
-///////////////////////////////////////////////////////////////////////////////
-function initBiddingRecord() {
-  var i;
-  var j;
-  var row;
-  var col;
-  roundIx = 0;
-  bidderIx = (dealerIx + 1) % 4;
-
-  var table = document.getElementById("auction");
-  for (i = 1, row; row = table.rows[i]; i++) {
-    for (j = 0, col; col = row.cells[j]; j++) {
-      table.rows[i].cells[j].innerHTML = "&nbsp;";
-    }
-  }
-
-  //Init first round of bidding
-  roundCalls = [];
-  boardRounds = [];
-
-  for (i = 0; i < 4; i++) {
-    roundCalls[i] = new callObj(0, "&nbsp;", false);
-  }
-
-  if (dealerIx != 3) {
-    if (dealerIx >= 0) {
-      roundCalls[0].suit = "&ndash;";
-    }
-    if (dealerIx >= 1) {
-      roundCalls[1].suit = "&ndash;";
-    }
-    if (dealerIx >= 2) {
-      roundCalls[2].suit = "&ndash;";
-    }
-  }
-
-  boardRounds[0] = roundCalls; // board of any nbr of rounds
-  seatBoards[0] = boardRounds; // seat records, any number of boards
-  nbrBoards[0] = boardIx + 1; // board numbers (boards can be out of order)
-  tableSeats[seatIx] = seatBoards; // table has 4 seats
-
-  //First row - header is row 0. This marks dashes
-  row = table.rows[1];
-  for (j = 0, col; col = row.cells[j]; j++) {
-    table.rows[1].cells[j].innerHTML = roundCalls[j].suit;
-  }
-  if (dealerIx == seatIx) {
-    promptBidder();
-  }
-}
-
-// Adds the most recent bid to the table
-// Info comes from biddingStatus; the table entry
-// from the corresponding roundCalls and boardRounds
-function updateBiddingRecord(){
-  var nCalls = roundCalls.length;
-  var nRounds = boardRounds.length;
-  var nBoards = seatBoards.length;
-
-  
+function promptBidder() {
+  console.log("prompt");
+  getbStat();
+  prepBidBox();
+  hiliteCurrentBiddingRecordCell();
+  popupBox("Your turn: Please bid", 5);
 }
