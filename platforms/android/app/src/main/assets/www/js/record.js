@@ -12,6 +12,7 @@
 // function makeBidRecordEntry()
 // function setCurrentBiddingRecordCell(newCall)
 // function getbStat()
+// function recordNewBid()
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,26 +44,28 @@ function drawBiddingRecordTable(){
   }
 }
 ///////////////////////////////////////////////////////////////////////////////
-// Reset the bidding record by clearing all cells
+// Reset the bidding record for a new board
+// argument = Board Number
 // Inserts &ndash; to left of bidder
 // Set up 4 callObj's for the first round of bidding
 // Set up roundCalls[0..4] with callObj's
 // Set up boardRounds[0], array of rounds, with current round
 // Set up seatBoards[0] with current boardArray
 // Set up tableSeats[0] with this seatRecord
+//
+//
 ///////////////////////////////////////////////////////////////////////////////
-function initBiddingRecord() {
+function initBiddingRecord(boardNr) {
   var i;
   var j;
   var row;
   var col;
 
-  //console.log("initBiddingRecord", seatIx, tableIx, boardIx, dealerIx, vulIx, roundIx, bidderIx);
   roundIx = 0;
   bidderIx = (dealerIx + 1) % 4;
+  boardIx = boardNr - 1;
 
-
-
+  // All cells of the table are emptied
   var table = document.getElementById("auction");
   for (i = 1, row; row = table.rows[i]; i++) {
     for (j = 0, col; col = row.cells[j]; j++) {
@@ -71,48 +74,47 @@ function initBiddingRecord() {
   }
 
   //Init first round of bidding
-  roundCalls = [];
-  boardRounds = [];
+  seatsRec = [];  //array of 4 calls objects
+  roundsRec = []; //array of rounds, each entry a seatsRec
 
   for (i = 0; i < 4; i++) {
-    roundCalls[i] = new callObj(0, "&nbsp;", false);
+    seatsRec[i] = new callObj(0, "&nbsp;", false); //space is code for none
   }
 
   if (dealerIx != 3) {
     if (dealerIx >= 0) {
-      roundCalls[0].suit = "&ndash;";
+      seatsRec[0].suit = "&ndash;"; //dash means no bidder this round
     }
     if (dealerIx >= 1) {
-      roundCalls[1].suit = "&ndash;";
+      seatsRec[1].suit = "&ndash;";
     }
     if (dealerIx >= 2) {
-      roundCalls[2].suit = "&ndash;";
+      seatsRec[2].suit = "&ndash;";
     }
   }
+  roundsRec[0] = seatsRec;
+  boardsRec[boardIx] = roundsRec;
 
-  boardRounds[0] = roundCalls; // board of any nbr of rounds
-  seatBoards[0] = boardRounds; // seat records, any number of boards
-  nbrBoards[0] = boardIx + 1; // board numbers (boards can be out of order)
-  tableSeats[seatIx] = seatBoards; // table has 4 seats
-
-  //First row - header is row 0. This marks dashes
+  //First row - header is row 0. This marks dashes in row 1
   row = table.rows[1];
   for (j = 0, col; col = row.cells[j]; j++) {
-    table.rows[1].cells[j].innerHTML = roundCalls[j].suit;
+    table.rows[1].cells[j].innerHTML = seatsRec[j].suit;
   }
-  if (dealerIx == seatIx) {
+  //if (dealerIx == seatIx) {
+    if (bidderIx == ((seatIx + 1) % 4)) {
     promptBidder();
-    //console.log("prompt in init bidding record");
+    //console.log("init bidding record exit", boardsRec, roundsRec, seatsRec);
   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Adds the most recent bid to the table
-// Info comes from bStat; the table entry
-// from the corresponding roundCalls and boardRounds
+// Info comes from bStat; the table entry coordinates
+// from the corresponding round and boardRounds
 function updateBiddingRecord() {
   var newCall = makeBidRecordEntry();
   setCurrentBiddingRecordCell(newCall);
+  //console.log("UpdateBiddingRec", newCall);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -161,7 +163,7 @@ function makeBidRecordEntry() {
 //
 function setCurrentBiddingRecordCell(newCall) {
   var colIx = bidderIx;
-  var rowIx = boardRounds.length; //row 0 is header
+  var rowIx = roundsRec.length; //row 0 is header
   var table = document.getElementById("auction");
   var cell = table.rows[rowIx].cells[colIx];
 
@@ -172,16 +174,19 @@ function setCurrentBiddingRecordCell(newCall) {
 }
 
 function hiliteCurrentBiddingRecordCell(){
+
   var colIx = bidderIx;
-  var rowIx = boardRounds.length; //row 0 is header
+  var rowIx = roundsRec.length; //row 0 is header
   var table = document.getElementById("auction");
   var cell = table.rows[rowIx].cells[colIx];
   //cell.style.background = "#0288D1";
   cell.style.background = "#C5E1A5";
+
+  //console.log("current cell", colIx, rowIx, roundsRec);
 }
 function unhiliteCurrentBiddingRecordCell(){
   var colIx = bidderIx;
-  var rowIx = boardRounds.length; //row 0 is header
+  var rowIx = roundsRec.length; //row 0 is header
   var table = document.getElementById("auction");
   var cell = table.rows[rowIx].cells[colIx];
   cell.style.background = "#26a69a";
@@ -193,7 +198,7 @@ function unhiliteCurrentBiddingRecordCell(){
 // The bidding status is a structure that contains all the information
 // necessary to manage the bidding box. This initialization obtains the
 // necessary info from the bidding record contents, which is contained
-// in the roundCalls and boardRounds arrays.
+// in the roundsRec and seatsRec arrays.
 //
 // The state of the bidding: bStat
 // lastBidder: "ME", "PA", "LH", "RH", "NO"
@@ -215,26 +220,31 @@ function getbStat() {
   var suit = "none";
   var dbl = false;
   var rdbl = false;
+  var passCount = 0;
 
-  var nRounds = boardRounds.length;
+  var nRounds = roundsRec.length;
   //console.log("getStatus rounds: ", nRounds, boardRounds);
 
   // Get the last bid(bidder,tricks,suit) bid by anyone
   for (var i = 0; i < nRounds; i++) {
     for (var j = 0; j < 4; j++) {
-      if (boardRounds[i][j].tricks != 0) {
+      if (roundsRec[i][j].tricks != 0) {
         bidIx = j;
         bidder = bidOrder[j];
-        tricks = boardRounds[i][j].tricks;
-        suit = boardRounds[i][j].suit;
+        tricks = roundsRec[i][j].tricks;
+        suit = roundsRec[i][j].suit;
+        dbl = false;
+        rdbl = false;
+        passCount = 0;
       } else {
-        if (boardRounds[i][j].suit == "X") {
+        if (roundsRec[i][j].suit == "X") {
           dbl = true;
-          rdbl = false;
         }
-        if (boardRounds[i][j].suit == "XX") {
-          dbl = false;
-          rdble = true;
+        if (roundsRec[i][j].suit == "XX") {
+          rdbl = true;
+        }
+        if (roundsRec[i][j].suit == "Pass"){
+          passCount += 1;
         }
       }
     }
@@ -265,10 +275,43 @@ function getbStat() {
     bStat.dbl = dbl;
     bStat.rdbl = rdbl;
   }
+  bStat.passCount = passCount;
   bStat.newTricks = 0;
   bStat.newSuit = "none";
   bStat.newCall = "none";
   bStat.newAlert = false;
 
   //console.log("Status ", nRounds, bStat);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Called when bid submitted.
+// Update the tables for bid, round, board, seat
+// Generate new bStat taking the new bid into account
+//
+function recordNewBid(){
+
+  var bA = bStat.newAlert;
+  var nT = bStat.newTricks;
+  var nS = bStat.newSuit;
+  var nC = bStat.newCall;
+  if( nT == 0){
+    nS = nC;
+  }
+  var cObj = new callObj(nT, nS, bA);
+  seatsRec[bidderIx] = cObj;
+
+  if(bidderIx == 3){ // append new round
+    seatsRec = [];
+    var len = roundsRec.length;
+    roundsRec[len] = seatsRec;
+    for (var i = 0; i < 4; i++) {
+      seatsRec[i] = new callObj(0, "&nbsp;", false); //space is code for none
+    }
+  }
+  //console.log("recordNewBid RoundsRec: ", roundsRec );
+
+
+  //console.log("record bid", bStat, cObj);
+  //console.log(boardsRec, roundsRec, seatsRec, cObj);
 }

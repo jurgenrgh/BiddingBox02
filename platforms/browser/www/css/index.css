@@ -286,7 +286,7 @@ select {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
-    padding-top: 58vh; /* Location of the box */
+    padding-top: 54vh; /* Location of the box */
     padding-left: 10vw;
     left: 0;
     top: 0;

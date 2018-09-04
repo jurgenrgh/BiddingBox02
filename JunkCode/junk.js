@@ -182,3 +182,17 @@ function handleNewSeat(val) {
                    targetDiv.classList.remove("hiliteBid");
                  }
                }
+
+               for( var b = 0; b < 5; b++ ){
+                 for(var r = 0; r < 3; r++ ){
+                   for(var s = 0; s < 4; s++ ){
+                     bid = new callObj(s,r,b);
+                     seat[s] = bid;
+                   }
+                   round[r] = seat;
+                   seat = new Array(0)
+                 }
+                 board[b] = round;
+                 round = new Array(0);
+               }
+               console.log(board);

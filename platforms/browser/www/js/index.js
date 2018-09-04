@@ -27,7 +27,7 @@ function handleRestart() {
   console.log("restart");
   drawCompass();
   clearBidBox();
-  initBiddingRecord();
+  initBiddingRecord(1);
 }
 
 //Rotate the direction where tablet is located
@@ -113,14 +113,15 @@ function handleNewBoardNumber() {
   vulIx = (Math.floor(boardIx / 4) + dealerIx) % 4;
   var textAfter = svgElem.textContent;
   drawCompass();
-  initBiddingRecord();
+  initBiddingRecord(val);
   //alert("handleNewBoardNumber Before: " + textBefore + " After: " + textAfter);
 }
 
 //This is being called without <form> tag and without "submit"
 //val is option value
 function handleSeatDirection(val) {
-  //alert("handleSeatDirection");
+  //alert("handleSeatDirection " + val);
+  //console.log("handleseat", val, seatIx, bidderIx, dealerIx, boardIx);
   if (val == "N") {
     seatIx = 0;
   }
@@ -135,9 +136,11 @@ function handleSeatDirection(val) {
   }
   drawCompass();
 
-  if (dealerIx == seatIx) {
+  //if (dealerIx == seatIx) {
+  if (bidderIx == ((seatIx + 1) % 4)) {
     promptBidder();
-    console.log("prompt in handleSeatDirection");
+
+    //console.log("handleseat", val, seatIx, bidderIx, dealerIx, boardIx);
   }
 }
 
@@ -162,9 +165,45 @@ function testBoardSettings() {
 }
 
 function promptBidder() {
-  console.log("prompt");
+  //console.log("prompt");
   getbStat();
+  console.log("prompt status", bStat);
   prepBidBox();
   hiliteCurrentBiddingRecordCell();
+  //console.log("missing popup");
   popupBox("Your turn: Please bid", 5);
+}
+
+function promptNextSeat(passCount){
+  var sd = bidOrder[(bidderIx + 1) % 4];
+
+  if(passCount == 4){
+    //setPopupButtonValue("OK", "PassOut");
+    popupBox("Passed out: Waiting for next Board", -1);
+  }
+
+  if((passCount == 3) && (bStat.tricks != 0)){
+    //setPopupButtonValue("OK", "Contract");
+    var tricks = bStat.tricks;
+    var suit = bStat.suit;
+    var dbl = bStat.dbl;
+    var rdbl = bStat.rdbl;
+    var x = "";
+    if(dbl)  x = "X";
+    if(rdbl) x = "XX";
+
+    if(suit == "Spades") suit = "&spades;";
+    if(suit == "Hearts") suit = "&hearts;";
+    if(suit == "Diams") suit = "&diams;";
+    if(suit == "Clubs") suit = "&clubs;";
+
+    var contract = tricks.toString(10) + suit + x;
+    popupBox("Contract: " + contract + "   Waiting for next Board", -1);
+  }
+
+  if( (passCount < 3) || ((bStat.tricks == 0) && (passCount == 3)) )
+  {
+    setPopupButtonValue("OK", "NextSeat");
+    popupBoxOK("Tablet will move to the next seat (" + sd + ")", "OK", -1);
+  }
 }

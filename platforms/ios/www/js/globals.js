@@ -9,7 +9,7 @@ var dealerIx = 0; // Dealer; function of boardIx
 var vulIx = 0; // Vulnerability; function of boardIx
 
 var roundIx = 0; //current round of bidding
-var bidderIx = 0; //current bidder (bid order ix)
+var bidderIx = 1; //current bidder (bid order ix: WNES)
 
 // The state of the bidding
 // lastBidder: "ME", "PA", "LH", "RH", "NO"
@@ -23,6 +23,7 @@ var bStat = {
   suit: "none",
   dbl: false,
   rdbl: false,
+  passCount: 0,
   boxOpen: false,
   newTricks: 0,
   newSuit: "none",
@@ -30,17 +31,16 @@ var bStat = {
   newAlert: false
 };
 
-var roundCalls = []; // round of 4 call objects
-var boardRounds = []; // board of any nbr of rounds
-var seatBoards = []; // seat records, any number of boards
-var nbrBoards = []; // board numbers (boards can be out of order)
-var tableSeats = []; // table has 4 seats
+var boardsRec = []; // an array of roundsRec arrays
+var roundsRec = []; // an array of seatsRec arrays
+var seatsRec = [];  // an array of 4 callObj objects
 
 var seatOrder = ["N", "E", "S", "W"];
 var bidOrder = ["W", "N", "E", "S"];
 var vulOrder = ["None", "NS", "EW", "All"];
 var suitNameOrder = ["Clubs", "Diams", "Hearts", "Spades", "NT"];
 var suitLetterOrder = ["C", "D", "H", "S", "NT"];
+var suitSymbols = {C:"&clubs;", D:"&diams;", H:"&hearts;", S:"&spades;", NT:"NT"};
 
 var modalBGColor = '#bf360C';
 var vulColor = '#d50000';
@@ -97,10 +97,10 @@ var app = {
     // Actual app Initialization //////////////////////////////////////////////
     drawCompass();
     drawBiddingRecordTable();
-    console.log("init before clearbox");
+    //console.log("init before clearbox");
     clearBidBox();
-    console.log("init after clearbox");
-    initBiddingRecord();
+    //console.log("init after clearbox");
+    initBiddingRecord(1);
   },
   // Update DOM on a Received Event (this is for splash screen)
   receivedEvent: function(id) {
@@ -277,4 +277,11 @@ function unselectBidButton(idTricks) {
   if (targetDiv != null) {
     targetDiv.classList.remove("hiliteBid");
   }
+}
+
+function unselectCallButtons(){
+  unselectBidButton("XX");
+  unselectBidButton("Pass");
+  unselectBidButton("X");
+  unselectBidButton("Alert");
 }

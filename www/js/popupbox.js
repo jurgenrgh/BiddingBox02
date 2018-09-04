@@ -18,7 +18,7 @@
 // text argument (label on the button) is not blank
 function popupBox(msgText, timeout) {
   clearTimeout(popupTimeOutRunning);
-console.log("popup entry");
+
   var msg = document.getElementById("msgBox");
   msg.style.display = "block"; //make it visible
 
@@ -29,7 +29,7 @@ console.log("popup entry");
     timeout = timeout * 1000;
     popupTimeOutRunning = setTimeout(hidePopupBox, timeout);
   }
-  console.log("popup exit");
+  //console.log("popup prompt", msgText, timeout);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +149,14 @@ function okButtonAction() {
   var b = document.getElementById("okButton");
   var t = b.innerHTML;
   var val = b.value;
-
-  alert("OK Button was pressed " + val);
+  if (val == "NextSeat") {
+    //console.log("next seat action");
+    var seat = seatOrder[(seatIx + 1) % 4];
+    bidderIx = (bidderIx + 1) % 4;
+    handleSeatDirection(seat);
+  }
+  else {
+    alert("Unassigned OK Button was pressed " + val);
+  }
+  hidePopupBox();
 }

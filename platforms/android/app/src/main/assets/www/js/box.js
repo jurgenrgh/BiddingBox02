@@ -18,7 +18,7 @@ function clearBidBox() {
   //Enable the trick buttons
   var idSuit;
   var id;
-  console.log("clearBidBox Enter", bStat);
+  //console.log("clearBidBox Enter", bStat);
 
   for (var i = 1; i <= 7; i++) {
     id = i.toString();
@@ -58,14 +58,14 @@ function clearBidBox() {
     newAlert: false
   };
 
-  console.log("clearBidBox Exit", bStat);
+  //console.log("clearBidBox Exit", bStat);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Set up the bidding box according to bStat
 //
 function prepBidBox() {
-  console.log("prepBidBox: Enter", bStat);
+  //console.log("prepBidBox: Enter", bStat);
   //Enable and disable the trick buttons acc to last bid given by bStat
   //Opens the Box
   var idSuit;
@@ -77,13 +77,13 @@ function prepBidBox() {
     unselectBidButton(id);
   }
 
-  for (var i = 1; i < n; i++) {
+  for (var i = 1; i < n; i++) { //disable lower levels
     id = i.toString();
     disableBidButton(id);
   }
 
   if (n > 0) {
-    if (bStat.suit == "NT") {
+    if (bStat.suit == "NT") { //disable current level if NT bid
       id = n.toString();
       disableBidButton(id);
     } else {
@@ -123,7 +123,7 @@ function prepBidBox() {
 
   setCurrentBiddingRecordCell("");
 
-  console.log("prepBidBox: Exit", bStat);
+  //console.log("prepBidBox: Exit", bStat);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -132,9 +132,9 @@ function prepBidBox() {
 //
 function prepSuitBids() {
   var ixSuit = 0;
-  console.log("prepSuits", bStat);
+  //console.log("prepSuits", bStat);
   if (bStat.newTricks == bStat.tricks) {
-    ixSuit = suitNameOrder.indexOf(bStat.suit);
+    ixSuit = suitNameOrder.indexOf(bStat.suit) + 1;
   }
   enableHigherSuitBids(ixSuit);
 
@@ -153,7 +153,7 @@ function prepSuitBids() {
 function handleTricksBid(idTricks) {
   var id = parseInt(idTricks);
   var oldTricks = bStat.newTricks;
-  console.log(bStat);
+
   if (bStat.boxOpen == false) {
     popupBox("It's not your turn", 5);
     return;
@@ -217,54 +217,57 @@ function handleCalls(idCall) {
     return;
   }
 
-  if (bStat.newCall == idCall) { //Same call hit twice = undo
-    getbStat();
-    bStat.boxOpen = true;
-    bStat.newTricks = 0;
-    bStat.newSuit = "none";
-    bStat.newCall = "none";
-    bStat.newAlert = false;
-    prepBidBox();
-
-  } else { //All normal cases follow
-    selectBidButton(idCall);
-    if (idCall == "Pass") {
+  if (idCall == "Alert") {
+    if (bStat.newAlert) {
+      bStat.newAlert = false;
+      unselectBidButton("Alert");
+    } else {
+      bStat.newAlert = true;
+      selectBidButton("Alert");
+    }
+    updateBiddingRecord();
+  } else {
+    if (bStat.newCall == idCall) { //Same call hit twice = undo
+      unselectBidButton(idCall);
+      getbStat();
+      bStat.boxOpen = true;
       bStat.newTricks = 0;
       bStat.newSuit = "none";
-      bStat.newCall = "Pass";
+      bStat.newCall = "none";
       bStat.newAlert = false;
-
-      enableBidButton("Submit");
-      enableBidButton("Alert");
+      prepBidBox();
       updateBiddingRecord();
-    }
-    if (idCall == "X") {
-      bStat.newTricks = 0;
-      bStat.newSuit = "none";
-      bStat.newCall = "X";
-      bStat.newAlert = false;
-      enableBidButton("Submit");
-      enableBidButton("Alert");
-      updateBiddingRecord();
-    }
-    if (idCall == "XX") {
-      bStat.newTricks = 0;
-      bStat.newSuit = "none";
-      bStat.newCall = "XX";
-      bStat.newAlert = false;
-      enableBidButton("Submit");
-      enableBidButton("Alert");
-      updateBiddingRecord();
-    }
-    if (idCall == "Alert") {
-      if (bStat.newAlert) {
+    } else { //All normal cases follow
+      unselectCallButtons();
+      selectBidButton(idCall);
+      if (idCall == "Pass") {
+        bStat.newTricks = 0;
+        bStat.newSuit = "none";
+        bStat.newCall = "Pass";
         bStat.newAlert = false;
-        unselectBidButton("Alert");
-      } else {
-        bStat.newAlert = true;
-        selectBidButton("Alert");
+
+        enableBidButton("Submit");
+        enableBidButton("Alert");
+        updateBiddingRecord();
       }
-      updateBiddingRecord();
+      if (idCall == "X") {
+        bStat.newTricks = 0;
+        bStat.newSuit = "none";
+        bStat.newCall = "X";
+        bStat.newAlert = false;
+        enableBidButton("Submit");
+        enableBidButton("Alert");
+        updateBiddingRecord();
+      }
+      if (idCall == "XX") {
+        bStat.newTricks = 0;
+        bStat.newSuit = "none";
+        bStat.newCall = "XX";
+        bStat.newAlert = false;
+        enableBidButton("Submit");
+        enableBidButton("Alert");
+        updateBiddingRecord();
+      }
     }
   }
 }
@@ -278,28 +281,33 @@ function handleSubmitCall() {
     popupBox("It's not your turn", 5);
     return;
   }
-
+  unhiliteCurrentBiddingRecordCell();
   var t = makeBidRecordEntry();
-  console.log("submit", t);
+  recordNewBid();
+  clearBidBox();
+
+  getbStat();
+
+  promptNextSeat(bStat.passCount);
+
+  //console.log("submit", t);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Enables the submit button in the bidding box if
 // a valid bid is pending. Can be called anytime
 //
-function checkEnableSubmit()
-{
+function checkEnableSubmit() {
   var bCheck = false;
-  if( (bStat.newTricks > 0) && (bStat.newSuit != "none")){
+  if ((bStat.newTricks > 0) && (bStat.newSuit != "none")) {
     bCheck = true;
   }
-  if((bStat.newCall == "X") || (bStat.newCall == "XX") || (bStat.newCall == "PASS")){
+  if ((bStat.newCall == "X") || (bStat.newCall == "XX") || (bStat.newCall == "PASS")) {
     bCheck = true;
   }
-  if(bCheck){
+  if (bCheck) {
     enableBidButton("Submit");
-  }
-  else{
+  } else {
     disableBidButton("Submit");
   }
 }
