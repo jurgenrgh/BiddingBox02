@@ -196,3 +196,39 @@ function handleNewSeat(val) {
                  round = new Array(0);
                }
                console.log(board);
+
+               // Replaced by confirmSelectedBid
+               // Called in response to submitting a bid
+               // Argument is the number of consecutive passes including this bid
+               function promptNextSeat(passCount){
+                 var sd = bidOrder[(bidderIx + 1) % 4]; //next bidder
+
+                 if(passCount == 4){ //Board passed out
+                   popupBoxYesNo("Board passed out", "Confirm", "Cancel Pass", "passout", -1);
+                 }
+
+                 if((passCount == 3) && (bStat.tricks != 0)){// normal end of bidding
+
+                   var tricks = bStat.tricks;
+                   var suit = bStat.suit;
+                   var dbl = bStat.dbl;
+                   var rdbl = bStat.rdbl;
+                   var x = "";
+                   if(dbl)  x = "X";
+                   if(rdbl) x = "XX";
+
+                   if(suit == "Spades") suit = "&spades;";
+                   if(suit == "Hearts") suit = "&hearts;";
+                   if(suit == "Diams") suit = "&diams;";
+                   if(suit == "Clubs") suit = "&clubs;";
+
+                   var contract = tricks.toString(10) + suit + x;
+                   enableInput();
+                   popupBoxYesNo("Contract: " + contract, "Confirm", "Cancel Pass", "contract", -1);
+                 }
+
+                 if( (passCount < 3) || ((bStat.tricks == 0) && (passCount == 3)) )// normal move to next bidder
+                 {
+                   popupBoxOK("Tablet moves to the next bidder (" + sd + ")", "OK", "nextseat", -1);
+                 }
+               }

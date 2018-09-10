@@ -5,7 +5,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // function popupBox(msgText, timeout)
 // function popupBoxOK(msgText, okButtonText, timeout)
-// function popupBoxYesNo(msgText, yesButtonText, noButtonText, timeout)
+// function popupBoxYesNo(msgText, yesButtonText, noButtonText, buttonValue, timeout)
 // function hidePopupBox()
 // function setPopupButtonValue(but, val)
 // function yesButtonAction()
@@ -35,7 +35,7 @@ function popupBox(msgText, timeout) {
 ////////////////////////////////////////////////////////////////////////////////
 // Popup with ok button
 //
-function popupBoxOK(msgText, okButtonText, timeout) {
+function popupBoxOK(msgText, okButtonText, bVal, timeout) {
   clearTimeout(popupTimeOutRunning);
 
   var msg = document.getElementById("msgBoxOK");
@@ -48,6 +48,7 @@ function popupBoxOK(msgText, okButtonText, timeout) {
   if (okButtonText != "") {
     bOK.innerHTML = okButtonText;
     bOK.style.visibility = "visible";
+    bOK.value = bVal;
   } else {
     bOK.style.visibility = "hidden";
   }
@@ -62,7 +63,7 @@ function popupBoxOK(msgText, okButtonText, timeout) {
 ///////////////////////////////////////////////////////////////////////////////
 // Popup with Yes/No buttons
 //
-function popupBoxYesNo(msgText, yesButtonText, noButtonText, timeout) {
+function popupBoxYesNo(msgText, yesButtonText, noButtonText, bVal, timeout) {
   clearTimeout(popupTimeOutRunning);
 
   var msg = document.getElementById("msgBoxYesNo");
@@ -75,6 +76,7 @@ function popupBoxYesNo(msgText, yesButtonText, noButtonText, timeout) {
   if (yesButtonText != "") {
     bYes.innerHTML = yesButtonText;
     bYes.style.visibility = "visible";
+    bYes.value = bVal;
   } else {
     bYes.style.visibility = "hidden";
   }
@@ -82,6 +84,7 @@ function popupBoxYesNo(msgText, yesButtonText, noButtonText, timeout) {
   if (noButtonText != "") {
     bNo.innerHTML = noButtonText;
     bNo.style.visibility = "visible";
+    bNo.value = bVal;
   } else {
     bNo.style.visibility = "hidden";
   }
@@ -90,6 +93,7 @@ function popupBoxYesNo(msgText, yesButtonText, noButtonText, timeout) {
     timeout = timeout * 1000;
     popupTimeOutRunning = setTimeout(hidePopupBox, timeout);
   }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -107,7 +111,7 @@ function hidePopupBox() {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Set the button "value" attribute when the popup is opened
-// The idea is to allow diferen actions upon click
+// The idea is to allow different actions when clicked
 //
 function setPopupButtonValue(but, val) {
   if (but == "Yes") {
@@ -125,38 +129,77 @@ function setPopupButtonValue(but, val) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//The button value is set when the popupbox is opened
-//It identifies the required action
-//
+// The button value is set when the popupbox is opened
+// It identifies the required action
+// This function is called when the Yes-button is pressed
 function yesButtonAction() {
   var b = document.getElementById("yesButton");
   var t = b.innerHTML;
   var val = b.value;
-
-  alert("YES Button was pressed " + val);
+  if(val == "restart"){
+    //console.log("Yes Restart");
+    hidePopupBox();
+    confirmRestart();
+  }
+  if(val == "confirmPassout"){
+    hidePopupBox();
+    confirmPassout();
+  }
+  if(val == "confirmContract"){
+    hidePopupBox();
+    confirmContract();
+  }
+  if(val == "confirmBid"){
+    hidePopupBox();
+    confirmBid();
+  }
+  if(val == "finalContract"){
+    hidePopupBox();
+    bidNextBoard();
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Analogous to yes action
+//
 function noButtonAction() {
   var b = document.getElementById("noButton");
   var t = b.innerHTML;
   var val = b.value;
-
-  alert("NO Button was pressed " + val);
+  if(val == "restart"){
+    //console.log("Cancel Restart");
+    hidePopupBox();
+    cancelRestart();
+  }
+  if(val == "confirmPassout"){
+    hidePopupBox();
+    cancelPassout();
+  }
+  if(val == "confirmContract"){
+    hidePopupBox();
+    cancelContract();
+  }
+  if(val == "confirmBid"){
+    hidePopupBox();
+    cancelBid();
+  }
+  if(val == "finalContract"){
+    hidePopupBox();
+  }
 }
 
 function okButtonAction() {
   var b = document.getElementById("okButton");
   var t = b.innerHTML;
   var val = b.value;
-  if (val == "NextSeat") {
-    //console.log("next seat action");
+  if (val == "nextseat") {
+    console.log("next seat action");
     var seat = seatOrder[(seatIx + 1) % 4];
     bidderIx = (bidderIx + 1) % 4;
-    handleSeatDirection(seat);
+    handleSeatDirection(seat, true);
   }
   else {
-    alert("Unassigned OK Button was pressed " + val);
+    console.log("Unassigned OK Button was pressed " + val);
   }
   hidePopupBox();
 }

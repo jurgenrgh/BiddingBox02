@@ -33,7 +33,7 @@ function callObj(tricks, suit, alert) {
 ///////////////////////////////////////////////////////////////////////////////
 // Draw an empty table with header and 10 rows of 4 cells
 //
-function drawBiddingRecordTable(){
+function drawBiddingRecordTable() {
   var table = document.getElementById("auction");
   for (var i = 2; i <= 10; i++) {
     var row = table.insertRow(i);
@@ -70,11 +70,12 @@ function initBiddingRecord(boardNr) {
   for (i = 1, row; row = table.rows[i]; i++) {
     for (j = 0, col; col = row.cells[j]; j++) {
       table.rows[i].cells[j].innerHTML = "&nbsp;";
+      unhiliteBiddingRecordCell(i,j);
     }
   }
 
   //Init first round of bidding
-  seatsRec = [];  //array of 4 calls objects
+  seatsRec = []; //array of 4 calls objects
   roundsRec = []; //array of rounds, each entry a seatsRec
 
   for (i = 0; i < 4; i++) {
@@ -101,9 +102,8 @@ function initBiddingRecord(boardNr) {
     table.rows[1].cells[j].innerHTML = seatsRec[j].suit;
   }
   //if (dealerIx == seatIx) {
-    if (bidderIx == ((seatIx + 1) % 4)) {
-    promptBidder();
-    //console.log("init bidding record exit", boardsRec, roundsRec, seatsRec);
+  if (bidderIx == ((seatIx + 1) % 4)) {
+    promptBidder(true);
   }
 }
 
@@ -121,41 +121,60 @@ function updateBiddingRecord() {
 // Construct the text to be shown in the table cell
 // The info comes from the "new" part of bStat
 // Returns a string
+// The string consists of 3 <span> elements and goes into the innerHTML
+// of the current cell
 //
 function makeBidRecordEntry() {
   var newSuit = bStat.newSuit;
+  var newTricks = bStat.newTricks;
+  var newCall = bStat.newCall;
+  var newAlert = bStat.newAlert;
+  var newEntry = "";
+
+  if (newTricks > 0) {
+    newEntry = '<span class="record-tricks">' + newTricks + '</span>';
+  } else {
+    newEntry = '<span>' + '' + '</span>';
+  }
+
   if (newSuit == "Clubs") {
-    newSuit = "&clubs;";
+    newEntry = newEntry + '<span class="clubs">' + '&clubs;' + '</span>';
   }
   if (newSuit == "Diams") {
-    newSuit = "&diams;";
+    newEntry = newEntry + '<span class="diams">' + '&diams;' + '</span>';
   }
   if (newSuit == "Hearts") {
-    newSuit = "&hearts;";
+    newEntry = newEntry + '<span class="hearts">' + '&hearts;' + '</span>';
   }
   if (newSuit == "Spades") {
-    newSuit = "&spades;";
+    newEntry = newEntry + '<span class="spades">' + '&spades;' + '</span>';
+  }
+  if (newSuit == "NT") {
+    newEntry = newEntry + '<span class="nt">' + 'NT' + '</span>';
   }
   if (newSuit == "none") {
-    newSuit = "";
+    newEntry = newEntry + '<span>' + '' + '</span>';
   }
 
-  var newCall = bStat.newCall;
+  if (newCall == "X") {
+    newEntry = newEntry + '<span class="dbl">' + 'X' + '</span>';
+  }
+  if (newCall == "XX") {
+    newEntry = newEntry + '<span class="rdbl">' + 'XX' + '</span>';
+  }
+  if (newCall == "Pass") {
+    newEntry = newEntry + '<span class="pass">' + 'Pass' + '</span>';
+  }
   if (newCall == "none") {
-    newCall = "";
+    newEntry = newEntry + '<span>' + '' + '</span>';
   }
 
-  if (bStat.newTricks == 0) {
-    if (bStat.newAlert == true) {
-      newCall = newCall + "!";
-    }
-  } else {
-    newCall = bStat.newTricks + newSuit;
-    if (bStat.newAlert == true) {
-      newCall = newCall + "!";
-    }
+  if (newAlert == true) {
+    newEntry = newEntry + '<span class="record-alert">' + '!!' + '</span>';
+    //newEntry = newEntry + '<span class="record-alert">' + '&#x26a0;' + '</span>';
   }
-  return (newCall);
+
+  return (newEntry);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -168,29 +187,46 @@ function setCurrentBiddingRecordCell(newCall) {
   var cell = table.rows[rowIx].cells[colIx];
 
   //cell.style.background = "yellow";
+  //cell.style.color = red;
   table.rows[rowIx].cells[colIx].innerHTML = newCall;
 
   //console.log("Set Cell: ", newCall);
 }
 
-function hiliteCurrentBiddingRecordCell(){
-
+///////////////////////////////////////////////////////////////////////////////
+// If both row and col >= 0 then that cell is hilited
+// If either arguent < 0 then the current cell is hilited
+//
+function hiliteBiddingRecordCell(row,col) {
   var colIx = bidderIx;
   var rowIx = roundsRec.length; //row 0 is header
+
+  if((row >= 0) && (col >= 0)){
+    colIx = col;
+    rowIx = row;
+  }
+
   var table = document.getElementById("auction");
   var cell = table.rows[rowIx].cells[colIx];
-  //cell.style.background = "#0288D1";
-  cell.style.background = "#C5E1A5";
-
-  //console.log("current cell", colIx, rowIx, roundsRec);
+  cell.style.background = modalBgColor;
 }
-function unhiliteCurrentBiddingRecordCell(){
+
+///////////////////////////////////////////////////////////////////////////////
+// If both row and col >= 0 then that cell is unhilited
+// If either arguent < 0 then the current cell is unhilited
+//
+function unhiliteBiddingRecordCell(row,col) {
   var colIx = bidderIx;
   var rowIx = roundsRec.length; //row 0 is header
+
+  if((row >= 0) && (col >= 0)){
+    colIx = col;
+    rowIx = row;
+  }
+
   var table = document.getElementById("auction");
   var cell = table.rows[rowIx].cells[colIx];
-  cell.style.background = "#26a69a";
-
+  cell.style.background = mainBgColor;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -239,11 +275,13 @@ function getbStat() {
       } else {
         if (roundsRec[i][j].suit == "X") {
           dbl = true;
+          passCount = 0;
         }
         if (roundsRec[i][j].suit == "XX") {
           rdbl = true;
+          passCount = 0;
         }
-        if (roundsRec[i][j].suit == "Pass"){
+        if (roundsRec[i][j].suit == "Pass") {
           passCount += 1;
         }
       }
@@ -289,19 +327,19 @@ function getbStat() {
 // Update the tables for bid, round, board, seat
 // Generate new bStat taking the new bid into account
 //
-function recordNewBid(){
+function recordNewBid() {
 
   var bA = bStat.newAlert;
   var nT = bStat.newTricks;
   var nS = bStat.newSuit;
   var nC = bStat.newCall;
-  if( nT == 0){
+  if (nT == 0) {
     nS = nC;
   }
   var cObj = new callObj(nT, nS, bA);
   seatsRec[bidderIx] = cObj;
 
-  if(bidderIx == 3){ // append new round
+  if (bidderIx == 3) { // append new round
     seatsRec = [];
     var len = roundsRec.length;
     roundsRec[len] = seatsRec;
@@ -310,7 +348,6 @@ function recordNewBid(){
     }
   }
   //console.log("recordNewBid RoundsRec: ", roundsRec );
-
 
   //console.log("record bid", bStat, cObj);
   //console.log(boardsRec, roundsRec, seatsRec, cObj);

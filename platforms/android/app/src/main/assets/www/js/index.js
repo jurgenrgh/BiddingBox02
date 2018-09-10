@@ -1,11 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-///////// Routine Operations //////////////////////////
+///////// Routine Operations ////////////////////
 /////////////////////////////////////////////////////////////////////////////
 function handleSetup() {
-  alert("General Setup. Will handle Table, Seat " +
-  "and possibly board series assignment. Also " +
-  "any other settings not under control of the player. " +
-  "A protected director function. Not implemented");
+  //console.log("setup clicked");
+  popupBox("General Setup. Will handle Table, Seat " + "and possibly board series assignment. Also " + "any other settings not under control of the player. " + "A protected director function. Not implemented", 10);
 }
 
 function handleLHO() {
@@ -17,27 +15,37 @@ function handleRHO() {
 }
 
 function handleRestart() {
+  popupBoxYesNo("Are you sure? This will clear all data.", "Yes", "Cancel", "restart", -1);
+}
+
+function confirmRestart() {
   boardIx = 0; // Board index
   dealerIx = 0; // Dealer; function of boardIx
   vulIx = 0; // Vulnerability; function of boardIx
 
   roundIx = 0; //current round of bidding
   bidderIx = 1; //current bidder (bid order ix)
-
-  console.log("restart");
+  hidePopupBox();
   drawCompass();
   clearBidBox();
   initBiddingRecord(1);
+  enableInput();
 }
 
-//Rotate the direction where tablet is located
-function handleNextSeat() {
-  alert("next seat");
+function cancelRestart() {
+  hidePopupBox();
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//// Table, Board Number and Seat Input //////////////////
+//// Table, Board Number and Seat Input ////////////
 //////////////////////////////////////////////////////////////////////////////
+function submitSectionId(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  handleNewSectionId();
+  return false;
+}
+
 function submitTableNumber(event) {
   event.preventDefault(); // prevents the "submit form action"
   simulateClick(); // causes the keyboard to hide
@@ -50,6 +58,19 @@ function submitBoardNumber(event) {
   simulateClick(); // causes the keyboard to hide
   handleNewBoardNumber();
   return false;
+}
+
+function handleNewSectionId() {
+  var svgElem = document.getElementById("svgTextTableNbr");
+  var textBefore = svgElem.textContent; //old nbr
+  var val = document.getElementById("input-section-id").value; //new id
+  var tnbr = tableIx + 1;
+  var seat = seatOrder[seatIx];
+  svgElem.textContent = "Table " + val + tnbr + seat;
+  sectionId = val;
+  var textAfter = svgElem.textContent;
+  console.log("New Section", textAfter);
+  drawCompass();
 }
 
 function handleNewTableNumber() {
@@ -117,10 +138,12 @@ function handleNewBoardNumber() {
   //alert("handleNewBoardNumber Before: " + textBefore + " After: " + textAfter);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 //This is being called without <form> tag and without "submit"
 //val is option value
-function handleSeatDirection(val) {
-  //alert("handleSeatDirection " + val);
+// prompt = true makes "promptbidder" popup show
+//
+function handleSeatDirection(val, popup) {
   //console.log("handleseat", val, seatIx, bidderIx, dealerIx, boardIx);
   if (val == "N") {
     seatIx = 0;
@@ -136,11 +159,8 @@ function handleSeatDirection(val) {
   }
   drawCompass();
 
-  //if (dealerIx == seatIx) {
   if (bidderIx == ((seatIx + 1) % 4)) {
-    promptBidder();
-
-    //console.log("handleseat", val, seatIx, bidderIx, dealerIx, boardIx);
+    promptBidder(popup);
   }
 }
 
@@ -164,46 +184,123 @@ function testBoardSettings() {
   }
 }
 
-function promptBidder() {
+function promptBidder(popup) {
   //console.log("prompt");
   getbStat();
-  console.log("prompt status", bStat);
+  //console.log("prompt status", bStat);
   prepBidBox();
-  hiliteCurrentBiddingRecordCell();
-  //console.log("missing popup");
-  popupBox("Your turn: Please bid", 5);
+  hiliteBiddingRecordCell();
+  if (popup == true) {
+    popupBox("Your turn: Please bid", 4);
+  }
+  disableInput();
 }
 
-function promptNextSeat(passCount){
-  var sd = bidOrder[(bidderIx + 1) % 4];
-
-  if(passCount == 4){
-    //setPopupButtonValue("OK", "PassOut");
-    popupBox("Passed out: Waiting for next Board", -1);
+///////////////////////////////////////////////////////////////////////////////
+// The bidder has pressed the submit button (check symbol in BB)
+// Now he is asked "are you sure" in different ways depending
+// upon the bidding phase; namely, passout, final contract, or
+// continuing.
+// This function is called after the submit button is clicked but
+// before any other action
+//
+function confirmSelectedBid() {
+  var passCount = bStat.passCount;
+  if (bStat.newCall == "Pass") {
+    passCount += 1;
+  }
+  //console.log("Nbr of passes", passCount);
+  // Board being passed out
+  if (passCount == 4) {
+    popupBoxYesNo("Board passed out", "Confirm", "Cancel Pass", "confirmPassout", -1);
   }
 
-  if((passCount == 3) && (bStat.tricks != 0)){
-    //setPopupButtonValue("OK", "Contract");
+  // Contract being set - end of bidding
+  if ((passCount == 3) && (bStat.tricks != 0)) {
     var tricks = bStat.tricks;
     var suit = bStat.suit;
     var dbl = bStat.dbl;
     var rdbl = bStat.rdbl;
     var x = "";
-    if(dbl)  x = "X";
-    if(rdbl) x = "XX";
+    if (dbl)
+      x = "X";
+    if (rdbl)
+      x = "XX";
 
-    if(suit == "Spades") suit = "&spades;";
-    if(suit == "Hearts") suit = "&hearts;";
-    if(suit == "Diams") suit = "&diams;";
-    if(suit == "Clubs") suit = "&clubs;";
+    if (suit == "Spades")
+      suit = "&spades;";
+    if (suit == "Hearts")
+      suit = "&hearts;";
+    if (suit == "Diams")
+      suit = "&diams;";
+    if (suit == "Clubs")
+      suit = "&clubs;";
 
     var contract = tricks.toString(10) + suit + x;
-    popupBox("Contract: " + contract + "   Waiting for next Board", -1);
+    popupBoxYesNo("Contract: " + contract, "Confirm", "Cancel Pass", "confirmContract", -1);
   }
 
-  if( (passCount < 3) || ((bStat.tricks == 0) && (passCount == 3)) )
-  {
-    setPopupButtonValue("OK", "NextSeat");
-    popupBoxOK("Tablet will move to the next seat (" + sd + ")", "OK", -1);
+  // Bidding not finished: normal move to next bidder
+  if ((passCount < 3) || ((bStat.tricks == 0) && (passCount == 3))) {
+    var bid = makeBidRecordEntry();
+    popupBoxYesNo("Your bid is " + bid, "Confirm", "Cancel Bid", "confirmBid", -1);
   }
+}
+
+// The bidder has passed and agrees that the hand is to be passed out
+function confirmPassout() {
+  enableInput();
+  //console.log("confirmPassout");
+}
+
+function cancelPassout() {
+  //console.log("cancelPassout");
+  cancelCurrentBid();
+}
+
+function confirmContract() {
+  enableInput();
+  unhiliteBiddingRecordCell();
+  var t = makeBidRecordEntry();
+  recordNewBid();
+  clearBidBox();
+  getbStat();
+  var contract = getContract();
+  popupBoxYesNo("Final Contract: " + contract + "<br/>Bid next board?", "Yes", "No", "finalContract", -1 );
+}
+
+function cancelContract() {
+  cancelCurrentBid();
+  //console.log("cancelContract");
+}
+
+function confirmBid() {
+  //console.log("confirmBid entry", bStat.passCount, bStat);
+  unhiliteBiddingRecordCell();
+  var t = makeBidRecordEntry();
+  recordNewBid();
+  clearBidBox();
+
+  getbStat();
+  //console.log("confirmBid exit", bStat.passCount, bStat);
+
+  //var sd = bidOrder[(bidderIx + 1) % 4]; next bidder
+  //popupBoxOK("Tablet moves to the next bidder (" + sd + ")", "OK", "nextseat", -1);
+
+  var seat = seatOrder[(seatIx + 1) % 4];
+  bidderIx = (bidderIx + 1) % 4;
+  handleSeatDirection(seat, false);
+
+}
+
+function cancelBid() {
+  //console.log("cancelBid");
+  cancelCurrentBid();
+}
+
+function bidNextBoard(){
+  boardIx += 1;
+  var bnbr = boardIx + 1;
+  document.getElementById("input-board-nbr").value = bnbr;
+  handleNewBoardNumber();
 }

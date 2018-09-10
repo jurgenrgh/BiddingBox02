@@ -3,6 +3,7 @@
 //
 var seatIx = 1; // Seat of this tablet
 var tableIx = 0; // Table of this tablet
+var sectionId = "A"; // an additional id for table/tournament/session
 
 var boardIx = 0; // Board index
 var dealerIx = 0; // Dealer; function of boardIx
@@ -14,9 +15,10 @@ var bidderIx = 1; //current bidder (bid order ix: WNES)
 // The state of the bidding
 // lastBidder: "ME", "PA", "LH", "RH", "NO"
 // tricks: #d the level bids
-// suit: "C", "D", "H", "S", "NT", "none"
+// suit: "Clubs", "Diams", "Hearts", "Spades", "NT", "none"
 // dbl and rdble: true/false
 // boxOpen: true/false this seat is bidding
+// newCall: "X", "XX", "Pass", "none"
 var bStat = {
   lastBidder: "NO",
   tricks: 0,
@@ -42,12 +44,27 @@ var suitNameOrder = ["Clubs", "Diams", "Hearts", "Spades", "NT"];
 var suitLetterOrder = ["C", "D", "H", "S", "NT"];
 var suitSymbols = {C:"&clubs;", D:"&diams;", H:"&hearts;", S:"&spades;", NT:"NT"};
 
-var modalBGColor = '#bf360C';
+// Global colors are controlled from CSS
+// The CSS values will override the colors listed here
+var mainBgColor = '#26a69a';
+var modalBgColor = '#bf360C';
+var hiliteBidColor = '#1A237E';
 var vulColor = '#d50000';
 var nvulColor = '#2e7d32';
 
 var popupTimeOutRunning;
 /////// End of global variables ///////////////////////////////////////////////
+
+// Some color variables are defined in the :root element in css
+// This routine fetches them for use in js
+//
+function getCommonCssColors(){
+  var root = document.querySelector(':root');
+  var rootStyles = getComputedStyle(root);
+  mainBgColor = rootStyles.getPropertyValue('--main-bg-color');
+  modalBgColor = rootStyles.getPropertyValue('--modal-bg-color');
+  hiliteBidColor = rootStyles.getPropertyValue('--hilite-bid-color');
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //The following was copied from the PhoneGap HelloWorld example
@@ -67,7 +84,6 @@ var app = {
   // 'load', 'deviceready', 'offline', and 'online'.
   bindEvents: function() {
     document.addEventListener('deviceready', this.onDeviceReady, false);
-
   },
   // deviceready Event Handler
   //
@@ -95,6 +111,7 @@ var app = {
     screen.orientation.lock("portrait-primary");
 
     // Actual app Initialization //////////////////////////////////////////////
+    getCommonCssColors();
     drawCompass();
     drawBiddingRecordTable();
     //console.log("init before clearbox");
@@ -147,7 +164,8 @@ function drawCompass() {
 
   // Table Nbr and seat direction
   tnbr = tableIx + 1;
-  textTableNbr.textContent = "Table " + tnbr + seat;
+  textTableNbr.textContent = "Table " + sectionId + tnbr + seat;
+  document.getElementById("input-section-id").value = sectionId;
   document.getElementById("input-table-nbr").value = tnbr;
   document.getElementById("input-seat").value = seat;
 
@@ -158,24 +176,24 @@ function drawCompass() {
 
   //dealer
   if (dealerIx == 0) {
-    textNorth.textContent = "N*";
+    textNorth.textContent = "Dealer";
   } else {
-    textNorth.textContent = "N";
+    textNorth.textContent = "North";
   }
   if (dealerIx == 1) {
-    textEast.textContent = "E*";
+    textEast.textContent = "Dealer";
   } else {
-    textEast.textContent = "E";
+    textEast.textContent = "East";
   }
   if (dealerIx == 2) {
-    textSouth.textContent = "S*";
+    textSouth.textContent = "Dealer";
   } else {
-    textSouth.textContent = "S";
+    textSouth.textContent = "South";
   }
   if (dealerIx == 3) {
-    textWest.textContent = "W*";
+    textWest.textContent = "Dealer";
   } else {
-    textWest.textContent = "W";
+    textWest.textContent = "West";
   }
 
   //vulnerability
@@ -284,4 +302,98 @@ function unselectCallButtons(){
   unselectBidButton("Pass");
   unselectBidButton("X");
   unselectBidButton("Alert");
+}
+
+function disableInput(){
+  var sec = document.getElementById("input-section-id");
+  sec.disabled = true;
+  sec.style.color = 'grey';
+  var secl = document.getElementById("input-section-id-label");
+  secl.disabled = true;
+  secl.style.color = 'grey';
+
+  var t = document.getElementById("input-table-nbr");
+  t.disabled = true;
+  t.style.color = 'grey';
+  var tl = document.getElementById("input-table-nbr-label");
+  tl.disabled = true;
+  tl.style.color = 'grey';
+
+  var s = document.getElementById("input-seat");
+  s.disabled = true;
+  s.style.color = 'grey';
+  var sl = document.getElementById("input-seat-label");
+  sl.disabled = true;
+  sl.style.color = 'grey';
+
+  var b = document.getElementById("input-board-nbr");
+  b.disabled = true;
+  b.style.color = 'grey';
+  var bl = document.getElementById("input-board-nbr-label");
+  bl.disabled = true;
+  bl.style.color = 'grey';
+
+  var su = document.getElementById("setup");
+  su.disabled = true;
+  su.style.color = 'grey';
+}
+
+function enableInput(){
+  var sec = document.getElementById("input-section-id");
+  sec.disabled = false;
+  sec.style.color = 'black';
+  var secl = document.getElementById("input-section-id-label");
+  secl.disabled = false;
+  secl.style.color = 'black';
+
+  var t = document.getElementById("input-table-nbr");
+  t.disabled = false;
+  t.style.color = 'black';
+  var tl = document.getElementById("input-table-nbr-label");
+  tl.disabled = false;
+  tl.style.color = 'black';
+
+  var s = document.getElementById("input-seat");
+  s.disabled = false;
+  s.style.color = 'black';
+  var sl = document.getElementById("input-seat-label");
+  sl.disabled = false;
+  sl.style.color = 'black';
+
+  var b = document.getElementById("input-board-nbr");
+  b.disabled = false;
+  b.style.color = 'black';
+  var bl = document.getElementById("input-board-nbr-label");
+  bl.disabled = false;
+  bl.style.color = 'black';
+
+  var su = document.getElementById("setup");
+  su.disabled = false;
+  su.style.color = 'black';
+}
+
+// Constructs string for display using bStat
+function getContract(){
+  var tricks = bStat.tricks;
+  var suit = bStat.suit;
+  var dbl = bStat.dbl;
+  var rdbl = bStat.rdbl;
+  var x = "";
+  if (dbl)
+    x = "X";
+  if (rdbl)
+    x = "XX";
+
+  if (suit == "Spades")
+    suit = "&spades;";
+  if (suit == "Hearts")
+    suit = "&hearts;";
+  if (suit == "Diams")
+    suit = "&diams;";
+  if (suit == "Clubs")
+    suit = "&clubs;";
+
+  var contract = tricks.toString(10) + suit + x;
+
+  return(contract);
 }

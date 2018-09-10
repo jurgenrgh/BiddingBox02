@@ -281,14 +281,17 @@ function handleSubmitCall() {
     popupBox("It's not your turn", 5);
     return;
   }
-  unhiliteCurrentBiddingRecordCell();
-  var t = makeBidRecordEntry();
-  recordNewBid();
-  clearBidBox();
 
-  getbStat();
+  confirmSelectedBid();
 
-  promptNextSeat(bStat.passCount);
+  //unhiliteBiddingRecordCell();
+  //var t = makeBidRecordEntry();
+  //recordNewBid();
+  //clearBidBox();
+
+  //getbStat();
+
+  //promptNextSeat(bStat.passCount);
 
   //console.log("submit", t);
 }
@@ -310,4 +313,21 @@ function checkEnableSubmit() {
   } else {
     disableBidButton("Submit");
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// The current bid is what is recorded in the new** elements
+// of bStat. Retracting this bid this requires
+//  - resetting the bidbox accto bStat old info
+//  - clearing the bidding record cell
+//  - reinitializing bStat
+//
+function cancelCurrentBid(){
+  getbStat();
+  bStat.newTricks = 0;
+  bStat.newSuit = "none";
+  bStat.newCall = "none";
+  bStat.newAlert = false;
+  updateBiddingRecord();
+  prepBidBox();
 }

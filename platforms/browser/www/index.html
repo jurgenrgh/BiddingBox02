@@ -59,7 +59,7 @@
             <svg width="160" height="200" viewbox="0 0 120 150">
                 <g>
                   <rect x="0" y="0" width="120" height="30" style="fill-opacity: 0; stroke-width:1;stroke:black" id="svgRectTableNbr" />
-                  <text id="svgTextTableNbr" x="50%" y="17.5" font-size="2.5rem" alignment-baseline="middle" text-anchor="middle">Table 1N</text>
+                  <text id="svgTextTableNbr" x="50%" y="17.5" font-size="2.0rem" alignment-baseline="middle" text-anchor="middle">Table 1N</text>
                 </g>
                 <g transform="translate(0,30)">
                   <g>
@@ -68,27 +68,47 @@
                   </g>
                   <g>
                     <polygon points="0,0 120,0 90,30 30,30" style="fill:#2e7d32;stroke:black;stroke-width:0" id="svgRectNorth"/>
-                    <text id="svgTextNorth" x="50%" y="17.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">N*</text>
+                    <text id="svgTextNorth" x="50%" y="17.5" font-size="2.0rem" alignment-baseline="middle" text-anchor="middle">Dealer</text>
                   </g>
                   <g>
                     <polygon points="120,0 120,120 90,90 90,30" style="fill:#2e7d32;stroke:black;stroke-width:0" id="svgRectEast"/>
-                    <text id="svgTextEast" x="87.5%" y="62.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">E</text>
+                    <text id="svgTextEast" x="87.5%" y="68" font-size="2rem" alignment-baseline="middle" text-anchor="middle" style="writing-mode: vertical-lr;">East</text>
+
                   </g>
                   <g>
                     <polygon points="0,120 120,120 90,90 30,90" style="fill:#2e7d32;stroke:black;stroke-width:0" id="svgRectSouth"/>
-                    <text id="svgTextSouth" x="50%" y="107.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">S</text>
+                    <text id="svgTextSouth" x="50%" y="107.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">South</text>
                   </g>
                   <g>
                     <polygon points="0,0 30,30 30,90 0,120" style="fill:#2e7d32;stroke:black;stroke-width:0" id="svgRectWest"/>
-                    <text id="svgTextWest" x="12.5%" y="62.5" font-size="2rem" alignment-baseline="middle" text-anchor="middle">W</text>
+                    <text id="svgTextWest" x="12.5%" y="68" font-size="2rem" alignment-baseline="middle" text-anchor="middle" style="writing-mode: vertical-lr;text-orientation: sideways;">West</text>
                   </g>
                 </g>
               </svg>
 
+            <div class="btn-group">
+               <div>
+                  <button id="setup" onclick="handleSetup()">Setup</button>
+                  <!--<button id="lho" onclick="handleLHO()">&#x27A3;  LHO</button>-->
+                  <!--<button id="rho" onclick="handleRHO()">&#x27A3;  RHO</button>-->
+                  <button id="restart" onclick="handleRestart()">Restart</button>
+                  <!--<button id="undobid" onclick="handleUndoBid()">Undo Bid</button>-->
+               </div>
+            </div>
+
+            <form onsubmit="submitSectionId(event)" action="javascript:void(0);">
+               <div class="btn-group">
+                  <div>
+                     <label for="input-section-id" id="input-section-id-label">Section</label>
+                     <input type="text" id="input-section-id" name="input-section-id">
+                  </div>
+               </div>
+            </form>
+
             <form onsubmit="submitTableNumber(event)" action="javascript:void(0);">
                <div class="btn-group">
                   <div>
-                     <label for="input-table-nbr">Table</label>
+                     <label for="input-table-nbr" id="input-table-nbr-label">Table</label>
                      <input type="number" id="input-table-nbr" name="input-table-nbr" min="1" max="999">
                   </div>
                </div>
@@ -96,8 +116,8 @@
 
             <!--form onsubmit="submitSeatDirection(event)" action="javascript:void(0);">-->
             <div class="btn-group">
-               <label for="input-seat">Seat</label>
-               <select id="input-seat" name="input-seat" onchange="handleSeatDirection(this.value)">
+               <label for="input-seat" id="input-seat-label">Seat</label>
+               <select id="input-seat" name="input-seat" onchange="handleSeatDirection(this.value, true)">
                 <option value="N">&nbsp; N</option>
                 <option value="E">&nbsp; E</option>
                 <option value="S" selected>&nbsp; S</option>
@@ -109,23 +129,13 @@
             <form onsubmit="submitBoardNumber(event)" action="javascript:void(0);">
                <div class="btn-group">
                   <div>
-                     <label for="input-board-nbr">Board</label>
+                     <label for="input-board-nbr" id="input-board-nbr-label">Board</label>
                      <input type="number" id="input-board-nbr" name="input-board-number" min="1" max="36">
                   </div>
                </div>
             </form>
 
-            <form>
-               <div class="btn-group">
-                  <div>
-                     <button id="setup" onclick="handleSetup()">Setup</button>
-                     <button id="lho" onclick="handleLHO()">&#x27A3;  LHO</button>
-                     <button id="rho" onclick="handleRHO()">&#x27A3;  RHO</button>
-                     <button id="restart" onclick="handleRestart()">Restart</button>
-                     <!--<button id="nextseat" onclick="handleNextSeat()">Next Seat</button>-->
-                  </div>
-               </div>
-            </form>
+
          </div>
 
          <div class=flex-table>
