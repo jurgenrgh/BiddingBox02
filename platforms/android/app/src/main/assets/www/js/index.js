@@ -1,10 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 ///////// Routine Operations ////////////////////
 /////////////////////////////////////////////////////////////////////////////
-function handleSetup() {
-  //console.log("setup clicked");
-  popupBox("General Setup. Will handle Table, Seat " + "and possibly board series assignment. Also " + "any other settings not under control of the player. " + "A protected director function. Not implemented", 10);
-}
+
 
 function handleLHO() {
   alert("Send a Message to LHO: Not implemented");
@@ -39,6 +36,12 @@ function cancelRestart() {
 //////////////////////////////////////////////////////////////////////////////
 //// Table, Board Number and Seat Input ////////////
 //////////////////////////////////////////////////////////////////////////////
+function submitPin(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  handlePin();
+  return false;
+}
 function submitSectionId(event) {
   event.preventDefault(); // prevents the "submit form action"
   simulateClick(); // causes the keyboard to hide
@@ -81,6 +84,17 @@ function handleNewTableNumber() {
   tableIx = val - 1;
   var textAfter = svgElem.textContent;
   drawCompass();
+}
+
+function handlePin(){
+  var val = document.getElementById("input-pin").value; //pin value
+  if( val == validPin ){
+    //todo: enable all the buttons on console
+  }
+  else
+  {
+    popupBox("The valid Pin is 1234", 3);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

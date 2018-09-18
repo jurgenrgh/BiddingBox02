@@ -17,6 +17,7 @@
         <icon density="xxhdpi" src="www/res/mipmap-xxhdpi/ic_launcher.png" />
         <icon density="xxxhdpi" src="www/res/mipmap-xxxhdpi/ic_launcher.png" />
     </platform>
+    <plugin name="cordova-plugin-networking-bluetooth" spec="^1.0.3" />
     <engine name="android" spec="~7.0.0" />
     <engine name="ios" spec="^4.5.5" />
     <engine name="browser" spec="^5.0.4" />

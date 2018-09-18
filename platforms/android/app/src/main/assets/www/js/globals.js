@@ -12,6 +12,8 @@ var vulIx = 0; // Vulnerability; function of boardIx
 var roundIx = 0; //current round of bidding
 var bidderIx = 1; //current bidder (bid order ix: WNES)
 
+var validPin = 1234;
+
 // The state of the bidding
 // lastBidder: "ME", "PA", "LH", "RH", "NO"
 // tricks: #d the level bids

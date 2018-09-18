@@ -21,6 +21,28 @@
             {
               "xml": "<feature name=\"Exit\"><param name=\"android-package\" value=\"im.ckk.cordova.exit\" /></feature>",
               "count": 1
+            },
+            {
+              "xml": "<feature name=\"NetworkingBluetooth\"><param name=\"android-package\" value=\"cordova.plugin.networking.bluetooth.NetworkingBluetooth\" /></feature>",
+              "count": 1
+            }
+          ]
+        }
+      },
+      "AndroidManifest.xml": {
+        "parents": {
+          "/*": [
+            {
+              "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
+              "count": 1
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />",
+              "count": 1
+            },
+            {
+              "xml": "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
+              "count": 1
             }
           ]
         }
@@ -32,6 +54,9 @@
       "PACKAGE_NAME": "com.phonegap.biddingbox02"
     },
     "cordova-plugin-exit": {
+      "PACKAGE_NAME": "com.phonegap.biddingbox02"
+    },
+    "cordova-plugin-networking-bluetooth": {
       "PACKAGE_NAME": "com.phonegap.biddingbox02"
     }
   },
@@ -52,10 +77,24 @@
       "clobbers": [
         "cordova.plugins.exit"
       ]
+    },
+    {
+      "id": "cordova-plugin-networking-bluetooth.CDVNetEvent",
+      "file": "plugins/cordova-plugin-networking-bluetooth/www/CDVNetEvent.js",
+      "pluginId": "cordova-plugin-networking-bluetooth"
+    },
+    {
+      "id": "cordova-plugin-networking-bluetooth.NetworkingBluetooth",
+      "file": "plugins/cordova-plugin-networking-bluetooth/www/NetworkingBluetooth.js",
+      "pluginId": "cordova-plugin-networking-bluetooth",
+      "clobbers": [
+        "networking.bluetooth"
+      ]
     }
   ],
   "plugin_metadata": {
     "cordova.custom.plugins.exitapp": "1.0.0",
-    "cordova-plugin-exit": "1.0.2"
+    "cordova-plugin-exit": "1.0.2",
+    "cordova-plugin-networking-bluetooth": "1.0.3"
   }
 }

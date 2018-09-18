@@ -13,6 +13,7 @@
    <script type="text/javascript" src="js/box.js"></script>
    <script type="text/javascript" src="js/popupbox.js"></script>
    <script type="text/javascript" src="js/record.js"></script>
+   <script type="text/javascript" src="js/console.js"></script>
 </head>
 
 <body>
@@ -53,7 +54,66 @@
       </div>
    </div>
 
-   <div class=flex-container>
+   <!-- Directors Console -->
+   <!-- Visible only when Setup clicked -->
+   <!------------------------------------->
+   <div id="setup-page">
+      <h1>Director's Console</h1>
+      <h2>Login</h2>
+      <form onsubmit="submitPin(event)" action="javascript:void(0);">
+         <div class="btn-group-console">
+            <div>
+               <label for="input-pin" id="input-pin-label">Pin</label>
+               <input type="number" id="input-pin" name="input-pin" min="1" max="9999">
+            </div>
+         </div>
+      </form>
+      <h2>Tablet Name and Address</h2>
+      <div>
+         <h2>Placement</h2>
+         <form onsubmit="submitSectionId(event)" action="javascript:void(0);">
+            <div class="btn-group-console">
+               <div>
+                  <label for="input-section-id" id="input-section-id-label">Section</label>
+                  <input type="text" id="input-section-id" name="input-section-id">
+               </div>
+            </div>
+         </form>
+
+         <form onsubmit="submitTableNumber(event)" action="javascript:void(0);">
+            <div class="btn-group-console">
+               <div>
+                  <label for="input-table-nbr" id="input-table-nbr-label">Table</label>
+                  <input type="number" id="input-table-nbr" name="input-table-nbr" min="1" max="999">
+               </div>
+            </div>
+         </form>
+
+         <!--form onsubmit="submitSeatDirection(event)" action="javascript:void(0);">-->
+         <div class="btn-group-console">
+            <label for="input-seat" id="input-seat-label">Seat</label>
+            <select id="input-seat" name="input-seat" onchange="handleSeatDirection(this.value, true)">
+          <option value="N">&nbsp; N</option>
+          <option value="E">&nbsp; E</option>
+          <option value="S" selected>&nbsp; S</option>
+          <option value="W">&nbsp; W</option>
+      </select>
+         </div>
+      </div>
+
+      <h2>Boards</h2>
+
+      <h2>Connection Status</h2>
+      <h2>Exit</h2>
+      <div class="btn-group-console">
+        <label for="return-to-bb" id="return-to-bb-label"></label>
+         <button id="return-to-bb" onclick="returnToBiddingBoxPage()">Return</button>
+      </div>
+
+
+   </div>
+
+   <div id="bb-page" class=flex-container>
       <div class=flex-top>
          <div class=flex-menu>
             <svg width="160" height="200" viewbox="0 0 120 150">
@@ -87,44 +147,12 @@
               </svg>
 
             <div class="btn-group">
-               <div>
-                  <button id="setup" onclick="handleSetup()">Setup</button>
-                  <!--<button id="lho" onclick="handleLHO()">&#x27A3;  LHO</button>-->
-                  <!--<button id="rho" onclick="handleRHO()">&#x27A3;  RHO</button>-->
-                  <button id="restart" onclick="handleRestart()">Restart</button>
-                  <!--<button id="undobid" onclick="handleUndoBid()">Undo Bid</button>-->
-               </div>
+               <button id="setup" onclick="handleSetup()">Setup</button>
+               <!--<button id="lho" onclick="handleLHO()">&#x27A3;  LHO</button>-->
+               <!--<button id="rho" onclick="handleRHO()">&#x27A3;  RHO</button>-->
+               <button id="restart" onclick="handleRestart()">Restart</button>
+               <!--<button id="undobid" onclick="handleUndoBid()">Undo Bid</button>-->
             </div>
-
-            <form onsubmit="submitSectionId(event)" action="javascript:void(0);">
-               <div class="btn-group">
-                  <div>
-                     <label for="input-section-id" id="input-section-id-label">Section</label>
-                     <input type="text" id="input-section-id" name="input-section-id">
-                  </div>
-               </div>
-            </form>
-
-            <form onsubmit="submitTableNumber(event)" action="javascript:void(0);">
-               <div class="btn-group">
-                  <div>
-                     <label for="input-table-nbr" id="input-table-nbr-label">Table</label>
-                     <input type="number" id="input-table-nbr" name="input-table-nbr" min="1" max="999">
-                  </div>
-               </div>
-            </form>
-
-            <!--form onsubmit="submitSeatDirection(event)" action="javascript:void(0);">-->
-            <div class="btn-group">
-               <label for="input-seat" id="input-seat-label">Seat</label>
-               <select id="input-seat" name="input-seat" onchange="handleSeatDirection(this.value, true)">
-                <option value="N">&nbsp; N</option>
-                <option value="E">&nbsp; E</option>
-                <option value="S" selected>&nbsp; S</option>
-                <option value="W">&nbsp; W</option>
-            </select>
-            </div>
-            <!--</form>-->
 
             <form onsubmit="submitBoardNumber(event)" action="javascript:void(0);">
                <div class="btn-group">
@@ -134,7 +162,6 @@
                   </div>
                </div>
             </form>
-
 
          </div>
 

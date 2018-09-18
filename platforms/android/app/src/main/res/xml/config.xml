@@ -6,6 +6,9 @@
     <feature name="Exit">
         <param name="android-package" value="im.ckk.cordova.exit" />
     </feature>
+    <feature name="NetworkingBluetooth">
+        <param name="android-package" value="cordova.plugin.networking.bluetooth.NetworkingBluetooth" />
+    </feature>
     <name>BiddingBox02</name>
     <description>
         A blank PhoneGap app.

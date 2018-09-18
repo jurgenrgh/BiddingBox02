@@ -12,6 +12,9 @@
     },
     "cordova.custom.plugins.exitapp": {
       "PACKAGE_NAME": "com.phonegap.biddingbox02"
+    },
+    "cordova-plugin-networking-bluetooth": {
+      "PACKAGE_NAME": "com.phonegap.biddingbox02"
     }
   },
   "dependent_plugins": {}

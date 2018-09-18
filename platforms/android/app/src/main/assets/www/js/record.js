@@ -35,7 +35,7 @@ function callObj(tricks, suit, alert) {
 //
 function drawBiddingRecordTable() {
   var table = document.getElementById("auction");
-  for (var i = 2; i <= 10; i++) {
+  for (var i = 2; i <= 12; i++) {
     var row = table.insertRow(i);
     for (var j = 0; j < 4; j++) {
       var cell = row.insertCell(j);

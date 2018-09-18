@@ -18,14 +18,24 @@ body, html {
 
 h1 {
   display: block;
-  font-size: 3em;
-  margin-top: 0.67em;
-  margin-bottom: 0.67em;
+  font-size: 3rem;
+  margin-top: 1.0rem;
+  margin-bottom: 1.0rem;
   margin-left: 0;
   margin-right: 0;
   font-weight: bold;
+  text-align: center;
 }
-
+h2 {
+  display: block;
+  font-size: 2.5rem;
+  margin-top: 1.0rem;
+  margin-bottom: 1.0rem;
+  margin-left: 2rem;
+  margin-right: 0;
+  font-weight: bold;
+  text-align: left;
+}
 kbd {
   display: block;
   font-size: 3rem;
@@ -237,6 +247,19 @@ td {
   display: block;
 }
 
+.btn-group-console button {
+  background-color: transparent;
+  border: 1px solid black;
+  font-size: 2rem;
+  font-weight: normal;
+  color: black;
+  padding: 10px 16px;
+  margin-top: 4px;
+  cursor: pointer;
+  width: 160px;
+  display: block;
+}
+
 .btn-group label {
   vertical-align: middle;
   display: block;
@@ -254,6 +277,23 @@ td {
   text-align: left;
 }
 
+.btn-group-console label {
+  vertical-align: middle;
+  display: block;
+  background-color: transparent;
+  /*border: 1px solid black;*/
+  font-size: 2rem;
+  font-weight: normal;
+  color: black;
+  padding: 10px 10px 10px 2px;
+  margin-top: 4px;
+  margin-bottom: 2px;
+  margin-left: 4rem;
+  cursor: pointer;
+  width: 80px;
+  float: left;
+  text-align: left;
+}
 input[type="number"] {
   display: block;
   background-color: var(--main-bg-color);
@@ -367,4 +407,9 @@ select {
 .disabled{
   pointer-events: none;
   opacity: 0.2;
+}
+
+#setup-page
+{
+    display: none;
 }

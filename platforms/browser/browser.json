@@ -1,40 +1,57 @@
 {
-    "prepare_queue": {
-        "installed": [],
-        "uninstalled": []
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-exit": {
+      "PACKAGE_NAME": "com.phonegap.biddingbox02"
     },
-    "config_munge": {
-        "files": {}
+    "cordova.custom.plugins.exitapp": {
+      "PACKAGE_NAME": "com.phonegap.biddingbox02"
     },
-    "installed_plugins": {
-        "cordova-plugin-exit": {
-            "PACKAGE_NAME": "com.phonegap.biddingbox02"
-        },
-        "cordova.custom.plugins.exitapp": {
-            "PACKAGE_NAME": "com.phonegap.biddingbox02"
-        }
-    },
-    "dependent_plugins": {},
-    "modules": [
-        {
-            "file": "plugins/cordova-plugin-exit/www/exit.js",
-            "id": "cordova-plugin-exit.exit",
-            "pluginId": "cordova-plugin-exit",
-            "clobbers": [
-                "cordova.plugins.exit"
-            ]
-        },
-        {
-            "file": "plugins/cordova.custom.plugins.exitapp/www/ExitApp.js",
-            "id": "cordova.custom.plugins.exitapp.exitApp",
-            "pluginId": "cordova.custom.plugins.exitapp",
-            "merges": [
-                "navigator.app"
-            ]
-        }
-    ],
-    "plugin_metadata": {
-        "cordova-plugin-exit": "1.0.2",
-        "cordova.custom.plugins.exitapp": "1.0.0"
+    "cordova-plugin-networking-bluetooth": {
+      "PACKAGE_NAME": "com.phonegap.biddingbox02"
     }
+  },
+  "dependent_plugins": {},
+  "modules": [
+    {
+      "file": "plugins/cordova-plugin-exit/www/exit.js",
+      "id": "cordova-plugin-exit.exit",
+      "pluginId": "cordova-plugin-exit",
+      "clobbers": [
+        "cordova.plugins.exit"
+      ]
+    },
+    {
+      "file": "plugins/cordova.custom.plugins.exitapp/www/ExitApp.js",
+      "id": "cordova.custom.plugins.exitapp.exitApp",
+      "pluginId": "cordova.custom.plugins.exitapp",
+      "merges": [
+        "navigator.app"
+      ]
+    },
+    {
+      "file": "plugins/cordova-plugin-networking-bluetooth/www/CDVNetEvent.js",
+      "id": "cordova-plugin-networking-bluetooth.CDVNetEvent",
+      "pluginId": "cordova-plugin-networking-bluetooth"
+    },
+    {
+      "file": "plugins/cordova-plugin-networking-bluetooth/www/NetworkingBluetooth.js",
+      "id": "cordova-plugin-networking-bluetooth.NetworkingBluetooth",
+      "pluginId": "cordova-plugin-networking-bluetooth",
+      "clobbers": [
+        "networking.bluetooth"
+      ]
+    }
+  ],
+  "plugin_metadata": {
+    "cordova-plugin-exit": "1.0.2",
+    "cordova.custom.plugins.exitapp": "1.0.0",
+    "cordova-plugin-networking-bluetooth": "1.0.3"
+  }
 }

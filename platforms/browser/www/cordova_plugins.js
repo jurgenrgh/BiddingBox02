@@ -15,13 +15,27 @@ module.exports = [
         "merges": [
             "navigator.app"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-networking-bluetooth/www/CDVNetEvent.js",
+        "id": "cordova-plugin-networking-bluetooth.CDVNetEvent",
+        "pluginId": "cordova-plugin-networking-bluetooth"
+    },
+    {
+        "file": "plugins/cordova-plugin-networking-bluetooth/www/NetworkingBluetooth.js",
+        "id": "cordova-plugin-networking-bluetooth.NetworkingBluetooth",
+        "pluginId": "cordova-plugin-networking-bluetooth",
+        "clobbers": [
+            "networking.bluetooth"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
     "cordova-plugin-exit": "1.0.2",
-    "cordova.custom.plugins.exitapp": "1.0.0"
+    "cordova.custom.plugins.exitapp": "1.0.0",
+    "cordova-plugin-networking-bluetooth": "1.0.3"
 }
 // BOTTOM OF METADATA
 });
