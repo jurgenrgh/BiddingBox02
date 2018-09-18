@@ -9,23 +9,15 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <engine name="android" spec="~7.0.0" />
-    <engine name="ios" spec="~4.5.5" />
-    <engine name="browser" spec="~5.0.4" />
     <plugin name="cordova-plugin-exit" spec="^1.0.2" />
     <platform name="android">
-            <!--
-                ldpi    : 36x36 px
-                mdpi    : 48x48 px
-                hdpi    : 72x72 px
-                xhdpi   : 96x96 px
-                xxhdpi  : 144x144 px
-                xxxhdpi : 192x192 px
-            -->
-            <icon src="res/mipmap-mdpi/ic_launcher.png" density="mdpi" />
-            <icon src="res/mipmap-hdpi/ic_launcher.png" density="hdpi" />
-            <icon src="res/mipmap-xhdpi/ic_launcher.png" density="xhdpi" />
-            <icon src="res/mipmap-xxhdpi/ic_launcher.png" density="xxhdpi" />
-            <icon src="res/mipmap-xxxhdpi/ic_launcher.png" density="xxxhdpi" />
+        <icon density="mdpi" src="www/res/mipmap-mdpi/ic_launcher.png" />
+        <icon density="hdpi" src="www/res/mipmap-hdpi/ic_launcher.png" />
+        <icon density="xhdpi" src="www/res/mipmap-xhdpi/ic_launcher.png" />
+        <icon density="xxhdpi" src="www/res/mipmap-xxhdpi/ic_launcher.png" />
+        <icon density="xxxhdpi" src="www/res/mipmap-xxxhdpi/ic_launcher.png" />
     </platform>
+    <engine name="android" spec="~7.0.0" />
+    <engine name="ios" spec="^4.5.5" />
+    <engine name="browser" spec="^5.0.4" />
 </widget>

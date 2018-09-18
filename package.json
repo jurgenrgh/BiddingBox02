@@ -17,6 +17,7 @@
     "cordova-browser": "^5.0.4",
     "cordova-ios": "^4.5.5",
     "cordova-plugin-exit": "^1.0.2",
-    "cordova-plugin-exitapp": "^1.0.0"
+    "cordova-plugin-exitapp": "^1.0.0",
+    "verbose": "0.2.3"
   }
 }
