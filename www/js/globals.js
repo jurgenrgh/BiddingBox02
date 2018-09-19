@@ -13,6 +13,8 @@ var roundIx = 0; //current round of bidding
 var bidderIx = 1; //current bidder (bid order ix: WNES)
 
 var validPin = 1234;
+var firstBoardNbr = 1; //can be set by the director as first of current series
+var lastBoardNbr = 16; //dito
 
 // The state of the bidding
 // lastBidder: "ME", "PA", "LH", "RH", "NO"
@@ -170,6 +172,8 @@ function drawCompass() {
   document.getElementById("input-section-id").value = sectionId;
   document.getElementById("input-table-nbr").value = tnbr;
   document.getElementById("input-seat").value = seat;
+  document.getElementById("first-board-nbr").value = firstBoardNbr;
+  document.getElementById("last-board-nbr").value = lastBoardNbr;
 
   //Board number
   bnbr = boardIx + 1;

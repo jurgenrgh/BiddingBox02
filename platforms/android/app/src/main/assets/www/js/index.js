@@ -2,15 +2,6 @@
 ///////// Routine Operations ////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-
-function handleLHO() {
-  alert("Send a Message to LHO: Not implemented");
-}
-
-function handleRHO() {
-  alert("Send a Message to RHO: Not implemented");
-}
-
 function handleRestart() {
   popupBoxYesNo("Are you sure? This will clear all data.", "Yes", "Cancel", "restart", -1);
 }
@@ -63,6 +54,20 @@ function submitBoardNumber(event) {
   return false;
 }
 
+function submitFirstBoardNumber(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  handleFirstBoardNumber();
+  return false;
+}
+
+function submitLastBoardNumber(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  handleLastBoardNumber();
+  return false;
+}
+
 function handleNewSectionId() {
   var svgElem = document.getElementById("svgTextTableNbr");
   var textBefore = svgElem.textContent; //old nbr
@@ -95,6 +100,18 @@ function handlePin(){
   {
     popupBox("The valid Pin is 1234", 3);
   }
+}
+
+function handleFirstBoardNumber() {
+  var val = document.getElementById("first-board-nbr").value; //new nbr
+  firstBoardNbr = val;
+  popupBox("First & Last Board Numbers = " + firstBoardNbr + ", " + lastBoardNbr, 5);
+}
+
+function handleLastBoardNumber() {
+  var val = document.getElementById("last-board-nbr").value; //new nbr
+  lastBoardNbr = val;
+  popupBox("First & Last Board Numbers = " + firstBoardNbr + ", " + lastBoardNbr, 5);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -176,6 +193,18 @@ function handleSeatDirection(val, popup) {
   if (bidderIx == ((seatIx + 1) % 4)) {
     promptBidder(popup);
   }
+}
+
+// Called when selection of LHO Tablet changes
+// val is the assigned value corresponding to the chosen list item
+function handleLhoTabletName(val){
+  popupBox("LHO tablet selected: " + val);
+}
+
+// Called when RHO tablet changes
+// val is the assigned value corresponding to the chosen list item
+function handleRhoTabletName(val){
+  popupBox("RHO tablet selected: " + val);
 }
 
 function testBoardSettings() {
