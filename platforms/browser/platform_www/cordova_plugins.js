@@ -28,6 +28,14 @@ module.exports = [
         "clobbers": [
             "networking.bluetooth"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
+        "id": "cordova-plugin-screen-orientation.screenorientation",
+        "pluginId": "cordova-plugin-screen-orientation",
+        "clobbers": [
+            "cordova.plugins.screenorientation"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -35,7 +43,8 @@ module.exports.metadata =
 {
     "cordova-plugin-exit": "1.0.2",
     "cordova.custom.plugins.exitapp": "1.0.0",
-    "cordova-plugin-networking-bluetooth": "1.0.3"
+    "cordova-plugin-networking-bluetooth": "1.0.3",
+    "cordova-plugin-screen-orientation": "3.0.1"
 }
 // BOTTOM OF METADATA
 });

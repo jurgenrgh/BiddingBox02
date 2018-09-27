@@ -232,3 +232,153 @@ function handleNewSeat(val) {
                    popupBoxOK("Tablet moves to the next bidder (" + sd + ")", "OK", "nextseat", -1);
                  }
                }
+
+               <!-- Directors Console V1-->
+               <!-- Visible only when Setup clicked -->
+               <!------------------------------------->
+               <div id="setup-page">
+                  <h1>Director's Console</h1>
+                  <h2>Login</h2>
+                  <form onsubmit="submitPin(event)" action="javascript:void(0);">
+                     <div class="btn-group">
+                        <label for="input-pin" id="input-pin-label" class="large-indent">Pin</label>
+                        <input type="number" id="input-pin" name="input-pin" min="1" max="9999">
+                     </div>
+                  </form>
+
+                  <div>
+                     <h2>Tablet Names</h2>
+                     <div class="btn-group">
+                        <label for="input-tablet-lho" id="input-tablet-lho-label" class="large-indent">LHO</label>
+                        <select id="input-tablet-lho" name="input-tablet-lho" onchange="handleLhoTabletName(this.value, true)">
+                          <option value="1">&nbsp; Tab1</option>
+                          <option value="2">&nbsp; Tab2</option>
+                          <option value="3">&nbsp; Tab3</option>
+                          <option value="4">&nbsp; Tab4</option>
+                        </select>
+                     </div>
+                     <div class="btn-group">
+                        <label for="input-tablet-rho" id="input-tablet-rho-label" class="large-indent">RHO</label>
+                        <select id="input-tablet-rho" name="input-tablet-rho" onchange="handleRhoTabletName(this.value, true)">
+                          <option value="1">&nbsp; Tab1</option>
+                          <option value="2">&nbsp; Tab2</option>
+                          <option value="3">&nbsp; Tab3</option>
+                          <option value="4">&nbsp; Tab4</option>
+                        </select>
+
+                     </div>
+                  </div>
+                  <div>
+                     <h2>Placement</h2>
+                     <!--<div style="display:flex; flex-direction: row; justify-content: left; align-items: left">-->
+                     <form onsubmit="submitSectionId(event)" action="javascript:void(0);">
+                        <div class="btn-group">
+                           <div>
+                              <label for="input-section-id" id="input-section-id-label" class="large-indent">Section</label>
+                              <input type="text" id="input-section-id" name="input-section-id">
+                           </div>
+                           </div>
+                     </form>
+
+                     <form onsubmit="submitTableNumber(event)" action="javascript:void(0);">
+                        <div class="btn-group">
+                           <div>
+                              <label for="input-table-nbr" id="input-table-nbr-label" class="large-indent">Table</label>
+                              <input type="number" id="input-table-nbr" name="input-table-nbr" min="1" max="999">
+                           </div>
+                           </div>
+                     </form>
+
+
+                     <div class="btn-group">
+                        <label for="input-seat" id="input-seat-label" class="large-indent">Seat</label>
+                        <select id="input-seat" name="input-seat" onchange="handleSeatDirection(this.value, true)">
+                          <option value="N">&nbsp; N</option>
+                          <option value="E">&nbsp; E</option>
+                          <option value="S" selected>&nbsp; S</option>
+                          <option value="W">&nbsp; W</option>
+                        </select>
+                     </div>
+
+                  </div>
+
+                  <div>
+                     <h2>Boards</h2>
+                     <!--<div style="display:flex; flex-direction: row; justify-content: center; align-items: center">-->
+                     <form onsubmit="submitFirstBoardNumber(event)" action="javascript:void(0);">
+                        <div class="btn-group">
+                           <label for="first-board-nbr" id="first-board-nbr-label" class="large-indent">First</label>
+                           <input type="number" id="first-board-nbr" name="first-board-nbr" min="1" max="36">
+                        </div>
+                     </form>
+                     <form onsubmit="submitLastBoardNumber(event)" action="javascript:void(0);">
+                        <div class="btn-group">
+                           <label for="last-board-nbr" id="last-board-nbr-label" class="large-indent">Last</label>
+                           <input type="number" id="last-board-nbr" name="last-board-nbr" min="1" max="36">
+                        </div>
+                     </form>
+                     <!--</div>-->
+                  </div>
+
+                  <h2>Connection Status</h2>
+                  <table style="width:100%">
+                     <tr>
+                        <th class="td-status">Status</th>
+                        <th>RHO</th>
+                        <th>LHO</th>
+                     </tr>
+                     <tr>
+                        <td class="td-status">Disconnected</td>
+                        <td>
+                           <div class="dot"></div>
+                        </td>
+                        <td>
+                           <div class="dot"></div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="td-status">Waiting</td>
+                        <td>
+                           <div class="dot"></div>
+                        </td>
+                        <td>
+                           <div class="dot"></div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="td-status">Connected</td>
+                        <td>
+                           <div class="dot"></div>
+                        </td>
+                        <td>
+                           <div class="dot"></div>
+                        </td>
+                     </tr>
+                  </table>
+
+                  <h2>Exit</h2>
+                  <div class="btn-group">
+                     <label for="return-to-bb" id="return-to-bb-label"></label>
+                     <button id="return-to-bb" onclick="returnToBiddingBoxPage(1)">Return</button>
+                  </div>
+
+                  <div class="item-button">
+                     <button id="toggle-versions-1" onclick="toggleConsoles(1)">Toggle Consoles</button>
+                  </div> <!-- End Directors Console V1-->
+               </div>
+
+               #return-to-bb {
+                  font-size: 2rem;
+                  font-weight: normal;
+                  background-color: transparent;
+                  color: black;
+                  width: 100%;
+               }
+
+               #connect-button {
+                  font-size: 2rem;
+                  font-weight: normal;
+                  background-color: transparent;
+                  color: black;
+                  width: 100%;
+               }

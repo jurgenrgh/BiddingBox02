@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-///////// Routine Operations ////////////////////
+///////// Routine Operations //////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 function handleRestart() {
@@ -25,7 +25,7 @@ function cancelRestart() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//// Table, Board Number and Seat Input ////////////
+//// Table, Board Number and Seat Input //////////
 //////////////////////////////////////////////////////////////////////////////
 function submitPin(event) {
   event.preventDefault(); // prevents the "submit form action"
@@ -68,10 +68,55 @@ function submitLastBoardNumber(event) {
   return false;
 }
 
+function submitSendMessage(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  var val = document.getElementById("input-message-id").value; //new message
+  var buf = arrayBufferFromString(val);
+  //console.log(val);
+  var str = stringFromArrayBuffer(buf);
+  //console.log(str);
+}
+
+var lhoConnected = false;
+var rhoConnected = false;
+var lhoSocketId;
+var rhoSocketId;
+
+function msgToRho() {
+  var val = document.getElementById("input-message-id").value;
+  var buf = arrayBufferFromString(val);
+
+  if (rhoConnected) {
+    networking.bluetooth.send(rhoSocketId, buf, function(bytes_sent) {
+      console.log('Sent ' + bytes_sent + ' bytes ' + val + ' rhoSocket: ' + rhoSocketId);
+    }, function(errorMessage) {
+      console.log('Send failed: ' + errorMessage + ' msg: ' + val + ' rhoSocket: ' + rhoSocketId);
+    });
+  } else {
+    console.log("RHO not connected, message not sent");
+  }
+}
+
+function msgToLho() {
+  var val = document.getElementById("input-message-id").value;
+  var buf = arrayBufferFromString(val);
+
+  if (lhoConnected) {
+    networking.bluetooth.send(lhoSocketId, buf, function(bytes_sent) {
+      console.log('Sent ' + bytes_sent + ' bytes ' + val + ' lhoSocket: ' + lhoSocketId);
+    }, function(errorMessage) {
+      console.log('Send failed: ' + errorMessage  + ' msg: ' + val + ' lhoSocket: ' + lhoSocketId);
+    });
+  } else {
+    console.log("LHO not connected, message not sent");
+  }
+}
+
 function handleNewSectionId() {
   var svgElem = document.getElementById("svgTextTableNbr");
   var textBefore = svgElem.textContent; //old nbr
-  var val = document.getElementById("input-section-id").value; //new id
+  var val = document.getElementById("input-section-id").value; //new section
   var tnbr = tableIx + 1;
   var seat = seatOrder[seatIx];
   svgElem.textContent = "Table " + val + tnbr + seat;
@@ -91,13 +136,11 @@ function handleNewTableNumber() {
   drawCompass();
 }
 
-function handlePin(){
+function handlePin() {
   var val = document.getElementById("input-pin").value; //pin value
-  if( val == validPin ){
+  if (val == validPin) {
     //todo: enable all the buttons on console
-  }
-  else
-  {
+  } else {
     popupBox("The valid Pin is 1234", 3);
   }
 }
@@ -193,18 +236,6 @@ function handleSeatDirection(val, popup) {
   if (bidderIx == ((seatIx + 1) % 4)) {
     promptBidder(popup);
   }
-}
-
-// Called when selection of LHO Tablet changes
-// val is the assigned value corresponding to the chosen list item
-function handleLhoTabletName(val){
-  popupBox("LHO tablet selected: " + val);
-}
-
-// Called when RHO tablet changes
-// val is the assigned value corresponding to the chosen list item
-function handleRhoTabletName(val){
-  popupBox("RHO tablet selected: " + val);
 }
 
 function testBoardSettings() {
@@ -309,7 +340,7 @@ function confirmContract() {
   clearBidBox();
   getbStat();
   var contract = getContract();
-  popupBoxYesNo("Final Contract: " + contract + "<br/>Bid next board?", "Yes", "No", "finalContract", -1 );
+  popupBoxYesNo("Final Contract: " + contract + "<br/>Bid next board?", "Yes", "No", "finalContract", -1);
 }
 
 function cancelContract() {
@@ -341,7 +372,7 @@ function cancelBid() {
   cancelCurrentBid();
 }
 
-function bidNextBoard(){
+function bidNextBoard() {
   boardIx += 1;
   var bnbr = boardIx + 1;
   document.getElementById("input-board-nbr").value = bnbr;

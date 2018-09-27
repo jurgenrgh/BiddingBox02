@@ -1,18 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////
-///////// Routine Operations ////////////////////
+///////// Routine Operations //////////////////
 /////////////////////////////////////////////////////////////////////////////
-function handleSetup() {
-  //console.log("setup clicked");
-  popupBox("General Setup. Will handle Table, Seat " + "and possibly board series assignment. Also " + "any other settings not under control of the player. " + "A protected director function. Not implemented", 10);
-}
-
-function handleLHO() {
-  alert("Send a Message to LHO: Not implemented");
-}
-
-function handleRHO() {
-  alert("Send a Message to RHO: Not implemented");
-}
 
 function handleRestart() {
   popupBoxYesNo("Are you sure? This will clear all data.", "Yes", "Cancel", "restart", -1);
@@ -37,8 +25,14 @@ function cancelRestart() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//// Table, Board Number and Seat Input ////////////
+//// Table, Board Number and Seat Input //////////
 //////////////////////////////////////////////////////////////////////////////
+function submitPin(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  handlePin();
+  return false;
+}
 function submitSectionId(event) {
   event.preventDefault(); // prevents the "submit form action"
   simulateClick(); // causes the keyboard to hide
@@ -60,10 +54,69 @@ function submitBoardNumber(event) {
   return false;
 }
 
+function submitFirstBoardNumber(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  handleFirstBoardNumber();
+  return false;
+}
+
+function submitLastBoardNumber(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  handleLastBoardNumber();
+  return false;
+}
+
+function submitSendMessage(event) {
+  event.preventDefault(); // prevents the "submit form action"
+  simulateClick(); // causes the keyboard to hide
+  var val = document.getElementById("input-message-id").value; //new message
+  var buf = arrayBufferFromString(val);
+  //console.log(val);
+  var str = stringFromArrayBuffer(buf);
+  //console.log(str);
+}
+
+var lhoConnected = false;
+var rhoConnected = false;
+var lhoSocketId;
+var rhoSocketId;
+
+function msgToRho() {
+  var val = document.getElementById("input-message-id").value;
+  var buf = arrayBufferFromString(val);
+
+  if (rhoConnected) {
+    networking.bluetooth.send(rhoSocketId, buf, function(bytes_sent) {
+      console.log('Sent ' + bytes_sent + ' bytes ' + val + ' rhoSocket: ' + rhoSocketId);
+    }, function(errorMessage) {
+      console.log('Send failed: ' + errorMessage + ' msg: ' + val + ' rhoSocket: ' + rhoSocketId);
+    });
+  } else {
+    console.log("RHO not connected, message not sent");
+  }
+}
+
+function msgToLho() {
+  var val = document.getElementById("input-message-id").value;
+  var buf = arrayBufferFromString(val);
+
+  if (lhoConnected) {
+    networking.bluetooth.send(lhoSocketId, buf, function(bytes_sent) {
+      console.log('Sent ' + bytes_sent + ' bytes ' + val + ' lhoSocket: ' + lhoSocketId);
+    }, function(errorMessage) {
+      console.log('Send failed: ' + errorMessage  + ' msg: ' + val + ' lhoSocket: ' + lhoSocketId);
+    });
+  } else {
+    console.log("LHO not connected, message not sent");
+  }
+}
+
 function handleNewSectionId() {
   var svgElem = document.getElementById("svgTextTableNbr");
   var textBefore = svgElem.textContent; //old nbr
-  var val = document.getElementById("input-section-id").value; //new id
+  var val = document.getElementById("input-section-id").value; //new section
   var tnbr = tableIx + 1;
   var seat = seatOrder[seatIx];
   svgElem.textContent = "Table " + val + tnbr + seat;
@@ -81,6 +134,27 @@ function handleNewTableNumber() {
   tableIx = val - 1;
   var textAfter = svgElem.textContent;
   drawCompass();
+}
+
+function handlePin() {
+  var val = document.getElementById("input-pin").value; //pin value
+  if (val == validPin) {
+    //todo: enable all the buttons on console
+  } else {
+    popupBox("The valid Pin is 1234", 3);
+  }
+}
+
+function handleFirstBoardNumber() {
+  var val = document.getElementById("first-board-nbr").value; //new nbr
+  firstBoardNbr = val;
+  popupBox("First & Last Board Numbers = " + firstBoardNbr + ", " + lastBoardNbr, 5);
+}
+
+function handleLastBoardNumber() {
+  var val = document.getElementById("last-board-nbr").value; //new nbr
+  lastBoardNbr = val;
+  popupBox("First & Last Board Numbers = " + firstBoardNbr + ", " + lastBoardNbr, 5);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -266,7 +340,7 @@ function confirmContract() {
   clearBidBox();
   getbStat();
   var contract = getContract();
-  popupBoxYesNo("Final Contract: " + contract + "<br/>Bid next board?", "Yes", "No", "finalContract", -1 );
+  popupBoxYesNo("Final Contract: " + contract + "<br/>Bid next board?", "Yes", "No", "finalContract", -1);
 }
 
 function cancelContract() {
@@ -298,7 +372,7 @@ function cancelBid() {
   cancelCurrentBid();
 }
 
-function bidNextBoard(){
+function bidNextBoard() {
   boardIx += 1;
   var bnbr = boardIx + 1;
   document.getElementById("input-board-nbr").value = bnbr;

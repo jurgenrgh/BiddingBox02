@@ -18,17 +18,34 @@ body, html {
 
 h1 {
   display: block;
-  font-size: 3em;
-  margin-top: 0.67em;
-  margin-bottom: 0.67em;
+  font-size: 3rem;
+  margin-top: 1.0rem;
+  margin-bottom: 1.0rem;
   margin-left: 0;
   margin-right: 0;
   font-weight: bold;
+  text-align: center;
 }
-
+h2 {
+  display: block;
+  font-size: 2.5rem;
+  margin-top: 1.0rem;
+  margin-bottom: 1.0rem;
+  margin-left: 2rem;
+  margin-right: 0;
+  font-weight: bold;
+  text-align: left;
+}
 kbd {
   display: block;
   font-size: 3rem;
+}
+
+.small-indent{
+  margin-left: 2rem;
+}
+.large-indent{
+  margin-left: 4rem;
 }
 
 .flex-container {
@@ -237,6 +254,7 @@ td {
   display: block;
 }
 
+
 .btn-group label {
   vertical-align: middle;
   display: block;
@@ -268,6 +286,20 @@ input[type="number"] {
   height: 48px;
 }
 
+input.console-nbr-input[type="number"] {
+  display: block;
+  background-color: var(--main-bg-color);
+  border-style: none;
+  font-size: 2rem;
+  font-weight: bold;
+  color: black;
+  margin-top: 0;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
 input[type="text"] {
   display: block;
   background-color: var(--main-bg-color);
@@ -281,6 +313,35 @@ input[type="text"] {
   width: 66px;
   height: 48px;
 }
+
+input.console-text-input[type="text"] {
+  display: block;
+  background-color: var(--main-bg-color);
+  border-style: none;
+  font-size: 2rem;
+  font-weight: bold;
+  color: black;
+  margin-top: 0;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+input.console-message-input[type="text"] {
+  display: block;
+  background-color: var(--main-bg-color);
+  border: 1px solid black;
+  font-size: 2rem;
+  font-weight: normal;
+  color: black;
+  margin-left: 5%;
+  cursor: pointer;
+  text-align: left;
+  width: 90%;
+  height: 3rem;
+}
+
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -299,10 +360,23 @@ select {
   margin-top: 4px;
   cursor: pointer;
   text-align: center;
-  width: 67px;
+  width: 68px;
   height: 48px;
 }
 
+select.console-select {
+  display: block;
+  background-color: var(--main-bg-color);
+  border-style: none;
+  font-size: 1.5rem;
+  font-weight: normal;
+  color: black;
+  margin-top: 0;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
 /* Add a background color on hover */
  /*.btn-group button:hover {*/
 /*  background-color: #3e8e41;}*/
@@ -316,7 +390,7 @@ select {
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     padding-top: 54vh; /* Location of the box */
-    padding-left: 10vw;
+    /*padding-left: 10vw;*/
     left: 0;
     top: 0;
     width: 100vw;
@@ -334,7 +408,7 @@ select {
     color: black;
     margin: auto;
     padding: 10px;
-    width: 75%;
+    width: 80%;
 }
 
 .modal-button {
@@ -367,4 +441,25 @@ select {
 .disabled{
   pointer-events: none;
   opacity: 0.2;
+}
+
+#setup-page
+{
+    display: none;
+}
+
+.td-status{
+  text-align: left;
+  padding-left: 4rem ;
+}
+.td-dot{
+  align: center;
+  padding-left: 4rem ;
+}
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: red;
+    border-radius: 50%;
+    margin:auto;
 }

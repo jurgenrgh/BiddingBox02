@@ -17,6 +17,7 @@
 		3047A5141AB8059700498E2A /* build.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 3047A5111AB8059700498E2A /* build.xcconfig */; };
 		6AFF5BF91D6E424B00AB3073 /* CDVLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6AFF5BF81D6E424B00AB3073 /* CDVLaunchScreen.storyboard */; };
 		2D543106CE404038A3345E5D /* exit.m in Sources */ = {isa = PBXBuildFile; fileRef = 144D4264482A473E8D81520A /* exit.m */; };
+		96971F286913496385AFE0E1 /* CDVOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B3B49245C9477DAFC18A31 /* CDVOrientation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,8 @@
 		ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Bridging-Header.h"; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		144D4264482A473E8D81520A /* exit.m */ = {isa = PBXFileReference; name = "exit.m"; path = "cordova-plugin-exit/exit.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
 		97441EF2B1A1474ABF528A67 /* exit.h */ = {isa = PBXFileReference; name = "exit.h"; path = "cordova-plugin-exit/exit.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		17B3B49245C9477DAFC18A31 /* CDVOrientation.m */ = {isa = PBXFileReference; name = "CDVOrientation.m"; path = "cordova-plugin-screen-orientation/CDVOrientation.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		F3905DF9185C46C2ACEFF188 /* CDVOrientation.h */ = {isa = PBXFileReference; name = "CDVOrientation.h"; path = "cordova-plugin-screen-orientation/CDVOrientation.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +167,8 @@
 			children = (
 				144D4264482A473E8D81520A /* exit.m */,
 				97441EF2B1A1474ABF528A67 /* exit.h */,
+				17B3B49245C9477DAFC18A31 /* CDVOrientation.m */,
+				F3905DF9185C46C2ACEFF188 /* CDVOrientation.h */,
 			);
 			name = Plugins;
 			path = "BiddingBox02/Plugins";
@@ -277,6 +282,7 @@
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
 				2D543106CE404038A3345E5D /* exit.m in Sources */,
+				96971F286913496385AFE0E1 /* CDVOrientation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

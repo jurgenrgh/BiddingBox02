@@ -1,100 +1,126 @@
 {
-  "prepare_queue": {
-    "installed": [],
-    "uninstalled": []
-  },
-  "config_munge": {
-    "files": {
-      "config.xml": {
-        "parents": {
-          "/*": [
-            {
-              "xml": "<feature name=\"ExitApp\"><param name=\"android-package\" value=\"cordova.custom.plugins.exitapp.ExitApp\" /></feature>",
-              "count": 1
-            }
-          ]
-        }
-      },
-      "res/xml/config.xml": {
-        "parents": {
-          "/*": [
-            {
-              "xml": "<feature name=\"Exit\"><param name=\"android-package\" value=\"im.ckk.cordova.exit\" /></feature>",
-              "count": 1
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"ExitApp\"><param name=\"android-package\" value=\"cordova.custom.plugins.exitapp.ExitApp\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
             },
-            {
-              "xml": "<feature name=\"NetworkingBluetooth\"><param name=\"android-package\" value=\"cordova.plugin.networking.bluetooth.NetworkingBluetooth\" /></feature>",
-              "count": 1
-            }
-          ]
-        }
-      },
-      "AndroidManifest.xml": {
-        "parents": {
-          "/*": [
-            {
-              "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
-              "count": 1
+            "res/xml/config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"Exit\"><param name=\"android-package\" value=\"im.ckk.cordova.exit\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"NetworkingBluetooth\"><param name=\"android-package\" value=\"cordova.plugin.networking.bluetooth.NetworkingBluetooth\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"CDVOrientation\"><param name=\"android-package\" value=\"cordova.plugins.screenorientation.CDVOrientation\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
             },
-            {
-              "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />",
-              "count": 1
-            },
-            {
-              "xml": "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
-              "count": 1
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
+                            "count": 1
+                        }
+                    ]
+                }
             }
-          ]
         }
-      }
+    },
+    "installed_plugins": {
+        "cordova.custom.plugins.exitapp": {
+            "PACKAGE_NAME": "com.phonegap.biddingbox02"
+        },
+        "cordova-plugin-exit": {
+            "PACKAGE_NAME": "com.phonegap.biddingbox02"
+        },
+        "cordova-plugin-networking-bluetooth": {
+            "PACKAGE_NAME": "com.phonegap.biddingbox02"
+        },
+        "es6-promise-plugin": {
+            "PACKAGE_NAME": "com.phonegap.biddingbox02"
+        },
+        "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "com.phonegap.biddingbox02"
+        }
+    },
+    "dependent_plugins": {},
+    "modules": [
+        {
+            "id": "cordova.custom.plugins.exitapp.exitApp",
+            "file": "plugins/cordova.custom.plugins.exitapp/www/ExitApp.js",
+            "pluginId": "cordova.custom.plugins.exitapp",
+            "merges": [
+                "navigator.app"
+            ]
+        },
+        {
+            "id": "cordova-plugin-exit.exit",
+            "file": "plugins/cordova-plugin-exit/www/exit.js",
+            "pluginId": "cordova-plugin-exit",
+            "clobbers": [
+                "cordova.plugins.exit"
+            ]
+        },
+        {
+            "id": "cordova-plugin-networking-bluetooth.CDVNetEvent",
+            "file": "plugins/cordova-plugin-networking-bluetooth/www/CDVNetEvent.js",
+            "pluginId": "cordova-plugin-networking-bluetooth"
+        },
+        {
+            "id": "cordova-plugin-networking-bluetooth.NetworkingBluetooth",
+            "file": "plugins/cordova-plugin-networking-bluetooth/www/NetworkingBluetooth.js",
+            "pluginId": "cordova-plugin-networking-bluetooth",
+            "clobbers": [
+                "networking.bluetooth"
+            ]
+        },
+        {
+            "id": "es6-promise-plugin.Promise",
+            "file": "plugins/es6-promise-plugin/www/promise.js",
+            "pluginId": "es6-promise-plugin",
+            "runs": true
+        },
+        {
+            "id": "cordova-plugin-screen-orientation.screenorientation",
+            "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
+            "pluginId": "cordova-plugin-screen-orientation",
+            "clobbers": [
+                "cordova.plugins.screenorientation"
+            ]
+        }
+    ],
+    "plugin_metadata": {
+        "cordova.custom.plugins.exitapp": "1.0.0",
+        "cordova-plugin-exit": "1.0.2",
+        "cordova-plugin-networking-bluetooth": "1.0.3",
+        "es6-promise-plugin": "4.2.2",
+        "cordova-plugin-screen-orientation": "3.0.1"
     }
-  },
-  "installed_plugins": {
-    "cordova.custom.plugins.exitapp": {
-      "PACKAGE_NAME": "com.phonegap.biddingbox02"
-    },
-    "cordova-plugin-exit": {
-      "PACKAGE_NAME": "com.phonegap.biddingbox02"
-    },
-    "cordova-plugin-networking-bluetooth": {
-      "PACKAGE_NAME": "com.phonegap.biddingbox02"
-    }
-  },
-  "dependent_plugins": {},
-  "modules": [
-    {
-      "id": "cordova.custom.plugins.exitapp.exitApp",
-      "file": "plugins/cordova.custom.plugins.exitapp/www/ExitApp.js",
-      "pluginId": "cordova.custom.plugins.exitapp",
-      "merges": [
-        "navigator.app"
-      ]
-    },
-    {
-      "id": "cordova-plugin-exit.exit",
-      "file": "plugins/cordova-plugin-exit/www/exit.js",
-      "pluginId": "cordova-plugin-exit",
-      "clobbers": [
-        "cordova.plugins.exit"
-      ]
-    },
-    {
-      "id": "cordova-plugin-networking-bluetooth.CDVNetEvent",
-      "file": "plugins/cordova-plugin-networking-bluetooth/www/CDVNetEvent.js",
-      "pluginId": "cordova-plugin-networking-bluetooth"
-    },
-    {
-      "id": "cordova-plugin-networking-bluetooth.NetworkingBluetooth",
-      "file": "plugins/cordova-plugin-networking-bluetooth/www/NetworkingBluetooth.js",
-      "pluginId": "cordova-plugin-networking-bluetooth",
-      "clobbers": [
-        "networking.bluetooth"
-      ]
-    }
-  ],
-  "plugin_metadata": {
-    "cordova.custom.plugins.exitapp": "1.0.0",
-    "cordova-plugin-exit": "1.0.2",
-    "cordova-plugin-networking-bluetooth": "1.0.3"
-  }
 }

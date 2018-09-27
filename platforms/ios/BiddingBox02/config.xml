@@ -22,6 +22,9 @@
     <feature name="Exit">
         <param name="ios-package" value="Exit" />
     </feature>
+    <feature name="CDVOrientation">
+        <param name="ios-package" value="CDVOrientation" />
+    </feature>
     <name>BiddingBox02</name>
     <description>
         A blank PhoneGap app.

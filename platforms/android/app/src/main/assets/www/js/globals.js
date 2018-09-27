@@ -16,6 +16,26 @@ var validPin = 1234;
 var firstBoardNbr = 1; //can be set by the director as first of current series
 var lastBoardNbr = 16; //dito
 
+// Bluetooth Names and addresses
+var thisTabletBtName = "void";
+var thisTabletBtAddress = "void";
+
+var pairedBtNames = [];
+var pairedBtAddresses = [];
+
+var rhoBtName = "void";
+var lhoBtName = "void";
+var rhoBtAddress = "void";
+var lhoBtAddress = "void";
+
+var uuid = '94f39d29-7d6d-437d-973b-fba39e49d4ee';
+var listeningForConnectionRequest = false;
+var lhoConnected = false;
+var rhoConnected = false;
+var lhoSocketId = -1;
+var rhoSocketId = -1;
+var serverSocketId = -1;
+
 // The state of the bidding
 // lastBidder: "ME", "PA", "LH", "RH", "NO"
 // tricks: #d the level bids
@@ -39,14 +59,20 @@ var bStat = {
 
 var boardsRec = []; // an array of roundsRec arrays
 var roundsRec = []; // an array of seatsRec arrays
-var seatsRec = [];  // an array of 4 callObj objects
+var seatsRec = []; // an array of 4 callObj objects
 
 var seatOrder = ["N", "E", "S", "W"];
 var bidOrder = ["W", "N", "E", "S"];
 var vulOrder = ["None", "NS", "EW", "All"];
 var suitNameOrder = ["Clubs", "Diams", "Hearts", "Spades", "NT"];
 var suitLetterOrder = ["C", "D", "H", "S", "NT"];
-var suitSymbols = {C:"&clubs;", D:"&diams;", H:"&hearts;", S:"&spades;", NT:"NT"};
+var suitSymbols = {
+  C: "&clubs;",
+  D: "&diams;",
+  H: "&hearts;",
+  S: "&spades;",
+  NT: "NT"
+};
 
 // Global colors are controlled from CSS
 // The CSS values will override the colors listed here
@@ -57,12 +83,12 @@ var vulColor = '#d50000';
 var nvulColor = '#2e7d32';
 
 var popupTimeOutRunning;
-/////// End of global variables ///////////////////////////////////////////////
+/////// End of global variables /////////////////////////////////////////
 
 // Some color variables are defined in the :root element in css
 // This routine fetches them for use in js
 //
-function getCommonCssColors(){
+function getCommonCssColors() {
   var root = document.querySelector(':root');
   var rootStyles = getComputedStyle(root);
   mainBgColor = rootStyles.getPropertyValue('--main-bg-color');
@@ -100,8 +126,8 @@ var app = {
     //var tableNbr = document.getElementById("input-table-nbr");
     //tableNbr.addEventListener("input", inputTableNumber, false);
 
-/////// Event Listeners ///////////////////////////////////////////////////////
-//
+    /////// Event Listeners /////////////////////////////////////////////////
+    //
     var auction = document.getElementById("auction");
     auction.addEventListener("touchstart", handleTouch, {passive: true});
 
@@ -112,9 +138,13 @@ var app = {
     xSpan = document.getElementById("xModalBoxYesNo");
     xSpan.addEventListener("click", hidePopupBox, false);
 
-    screen.orientation.lock("portrait-primary");
+    // Receive Message from either LHO or RHO
+    //
+    networking.bluetooth.onReceive.addListener(onReceiveHandler);
 
-    // Actual app Initialization //////////////////////////////////////////////
+    screen.orientation.lock("portrait");
+
+    // Actual app Initialization ////////////////////////////////////////
     getCommonCssColors();
     drawCompass();
     drawBiddingRecordTable();
@@ -122,6 +152,10 @@ var app = {
     clearBidBox();
     //console.log("init after clearbox");
     initBiddingRecord(1);
+    getBtDevices();
+    setConnectionState("rho", "disconnected");
+    setConnectionState("lho", "disconnected");
+    startBtListening();
   },
   // Update DOM on a Received Event (this is for splash screen)
   receivedEvent: function(id) {
@@ -262,7 +296,7 @@ function handleTouch() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//Disable and grey out the bids and calls individually ///////////
+//Disable and grey out the bids and calls individually /////
 //////////////////////////////////////////////////////////////////////////////
 function enableBidButton(idTricks) {
   var targetDiv = document.getElementById(idTricks);
@@ -272,8 +306,8 @@ function enableBidButton(idTricks) {
 }
 
 //enable only suits higher ranking or same as argument
-function enableHigherSuitBids(ixSuit){
-  for( var i = ixSuit; i < 5; i++ ){
+function enableHigherSuitBids(ixSuit) {
+  for (var i = ixSuit; i < 5; i++) {
     var targetDiv = document.getElementById(suitNameOrder[i]);
     targetDiv.classList.remove("disabled");
   }
@@ -303,14 +337,14 @@ function unselectBidButton(idTricks) {
   }
 }
 
-function unselectCallButtons(){
+function unselectCallButtons() {
   unselectBidButton("XX");
   unselectBidButton("Pass");
   unselectBidButton("X");
   unselectBidButton("Alert");
 }
 
-function disableInput(){
+function disableInput() {
   var sec = document.getElementById("input-section-id");
   sec.disabled = true;
   sec.style.color = 'grey';
@@ -344,7 +378,7 @@ function disableInput(){
   su.style.color = 'grey';
 }
 
-function enableInput(){
+function enableInput() {
   var sec = document.getElementById("input-section-id");
   sec.disabled = false;
   sec.style.color = 'black';
@@ -379,7 +413,7 @@ function enableInput(){
 }
 
 // Constructs string for display using bStat
-function getContract(){
+function getContract() {
   var tricks = bStat.tricks;
   var suit = bStat.suit;
   var dbl = bStat.dbl;
@@ -401,5 +435,290 @@ function getContract(){
 
   var contract = tricks.toString(10) + suit + x;
 
-  return(contract);
+  return (contract);
+}
+
+function arrayBufferFromString(str) {
+  var buf,
+    bufView,
+    i,
+    j,
+    ref,
+    strLen;
+  strLen = str.length;
+  buf = new ArrayBuffer(strLen);
+  bufView = new Uint8Array(buf);
+  for (i = j = 0, ref = strLen; j < ref; i = j += 1) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+};
+
+function stringFromArrayBuffer(buf) {
+  return String.fromCharCode.apply(null, new Uint8Array(buf));
+};
+
+// Store all local variables
+// Uses the simplest possible local storage mechanism consisting
+// of an unindexed list of {key,value} pairs
+// The key is always the literal variable name
+// The value is the actual value converted to a string
+//
+function storeSettings(){
+  var storage = window.localStorage;
+
+  //var seatIx = 1; // Seat of this tablet
+  storage.setItem("seatIx", seatIx.toString());
+
+  //var tableIx = 0; // Table of this tablet
+  storage.setItem("tableIx", tableIx.toString());
+
+  //var sectionId = "A"; // an additional id for table/tournament/session
+  storage.setItem("sectionId", sectionId);
+
+  //var boardIx = 0; // Board index
+  storage.setItem("boardIx", boardIx.toString());
+
+  //var dealerIx = 0; // Dealer; function of boardIx
+  storage.setItem("dealerIx", dealerIx.toString());
+
+  //var vulIx = 0; // Vulnerability; function of boardIx
+  storage.setItem("vulIx", vulIx.toString());
+
+  //var roundIx = 0; //current round of bidding
+  storage.setItem("roundIx", roundIx.toString());
+
+  //var bidderIx = 1; //current bidder (bid order ix: WNES)
+  storage.setItem("bidderIx", bidderIx.toString());
+
+  //var validPin = 1234;
+  storage.setItem("validPin", validPin.toString());
+
+  //var firstBoardNbr = 1; //can be set by the director as first of current series
+  storage.setItem("firstBoardNbr", firstBoardNbr.toString());
+
+  //var lastBoardNbr = 16; //dito
+  storage.setItem("lastBoardNbr", lastBoardNbr.toString());
+
+  // Bluetooth Names and addresses
+  //var thisTabletBtName;
+  storage.setItem("thisTabletBtName", thisTabletBtName);
+  //var thisTabletBtAddress;
+  storage.setItem("thisTabletBtAddress", thisTabletBtAddress);
+
+  ////////////////////////////////////////////////////////////Action required !!!////////////
+  //var pairedBtNames = [];
+  //var pairedBtAddresses = [];
+
+  //var rhoBtName;
+  storage.setItem("rhoBtName", rhoBtName);
+  //var lhoBtName;
+  storage.setItem("lhoBtName", lhoBtName);
+  //var rhoBtAddress;
+  storage.setItem("rhoBtAddress", rhoBtAddress);
+  //var lhoBtAddress;
+  storage.setItem("lhoBtAddress", lhoBtAddress);
+
+  //var uuid = '94f39d29-7d6d-437d-973b-fba39e49d4ee';
+  storage.setItem("uuid", uuid);
+  //var listeningForConnectionRequest = false;
+  storage.setItem("listeningForConnectionRequest", String(listeningForConnectionRequest));
+  //var lhoConnected = false;
+  storage.setItem("lhoConnected", String(lhoConnected));
+  //var rhoConnected = false;
+  storage.setItem("rhoConnected", String(rhoConnected));
+  //var lhoSocketId;
+  storage.setItem("lhoSocketId", lhoSocketId.toString());
+  //var rhoSocketId;
+  storage.setItem("rhoSocketId", rhoSocketId.toString());
+  //var serverSocketId;
+  storage.setItem("serverSocketId", serverSocketId.toString());
+
+  /////////////////////////////////////////////////////////////////////////////
+  // The bidding record has been skipped for the moment.
+  // The current idea is an entry for each call;
+  // the form could be:
+  // key: 'xxyyzz', xx = board nbr, yy = round nbr, zz = seatIx
+  // value: String(tricks) + suit + String(alert).
+  // or
+  // key: 'xxyyzz-tricks', value: String(tricks)
+  // key: 'xxyyzz-suit', value: suit
+  // key: 'xxyyzz-alert', value: String(alert)
+
+  //var boardsRec = []; // an array of roundsRec arrays
+  //var roundsRec = []; // an array of seatsRec arrays
+  //var seatsRec = []; // an array of 4 callObj objects
+}
+
+// Restore all local variables
+// Inverse of storeSettings()
+//
+function restoreSettings(){
+  var storage = window.localStorage;
+
+  //var seatIx = 1; // Seat of this tablet
+  //storage.setItem("seatIx", seatIx.toString());
+  console.log("seatIx: ", seatIx);
+  seatIx = parseInt(storage.getItem("seatIx"));
+  console.log("seatIx: ", seatIx);
+
+  //var tableIx = 0; // Table of this tablet
+  //storage.setItem("tableIx", tableIx.toString());
+  console.log("tableIx: ", tableIx);
+  tableIx = parseInt(storage.getItem("tableIx"));
+  console.log("tableIx: ", tableIx);
+
+  //var sectionId = "A"; // an additional id for table/tournament/session
+  //storage.setItem("sectionId", sectionId);
+  console.log("sectionId: ", sectionId);
+  sectionId = storage.getItem("sectionId");
+  console.log("sectionId: ", sectionId);
+
+  //var boardIx = 0; // Board index
+  //storage.setItem("boardIx", boardIx.toString());
+  console.log("boardIx: ", boardIx);
+  boardIx = parseInt(storage.getItem("boardIx"));
+  console.log("boardIx: ", boardIx);
+
+  //var dealerIx = 0; // Dealer; function of boardIx
+  //storage.setItem("dealerIx", dealerIx.toString());
+  console.log("dealerIx: ", dealerIx);
+  dealerIx = parseInt(storage.getItem("dealerIx"));
+  console.log("dealerIx: ", dealerIx);
+
+  //var vulIx = 0; // Vulnerability; function of boardIx
+  //storage.setItem("vulIx", vulIx.toString());
+  console.log("vulIx: ", vulIx);
+  vulIx = parseInt(storage.getItem("vulIx"));
+  console.log("vulIx: ", vulIx);
+
+  //var roundIx = 0; //current round of bidding
+  //storage.setItem("roundIx", roundIx.toString());
+  console.log("roundIx: ", roundIx);
+  roundIx = parseInt(storage.getItem("roundIx"));
+  console.log("roundIx: ", roundIx);
+
+  //var bidderIx = 1; //current bidder (bid order ix: WNES)
+  //storage.setItem("bidderIx", bidderIx.toString());
+  console.log("bidderIx: ", bidderIx);
+  bidderIx = parseInt(storage.getItem("bidderIx"));
+  console.log("bidderIx: ", bidderIx);
+
+  //var validPin = 1234;
+  //storage.setItem("validPin", validPin.toString());
+  console.log("validPin: ", validPin);
+  validPin = parseInt(storage.getItem("validPin"));
+  console.log("validPin: ", validPin);
+
+  //var firstBoardNbr = 1; //can be set by the director as first of current series
+  //storage.setItem("firstBoardNbr", firstBoardNbr.toString());
+  console.log("firstBoardNbr: ", firstBoardNbr);
+  firstBoardNbr = parseInt(storage.getItem("firstBoardNbr"));
+  console.log("firstBoardNbr: ", firstBoardNbr);
+
+  //var lastBoardNbr = 16; //dito
+  //storage.setItem("lastBoardNbr", lastBoardNbr.toString());
+  console.log("lastBoardNbr: ", lastBoardNbr);
+  lastBoardNbr = parseInt(storage.getItem("lastBoardNbr"));
+  console.log("lastBoardNbr: ", lastBoardNbr);
+
+  // Bluetooth Names and addresses
+  //var thisTabletBtName;
+  //storage.setItem("thisTabletBtName", thisTabletBtName);
+  console.log("thisTabletBtName: ", thisTabletBtName);
+  thisTabletBtName = storage.getItem("thisTabletBtName");
+  console.log("thisTabletBtName: ", thisTabletBtName);
+
+  //var thisTabletBtAddress;
+  //storage.setItem("thisTabletBtAddress", thisTabletBtAddress);
+  console.log("thisTabletBtAddress: ", thisTabletBtAddress);
+  thisTabletBtAddress = storage.getItem("thisTabletBtAddress");
+  console.log("thisTabletBtAddress: ", thisTabletBtAddress);
+
+  // What to do about these?///////////////////////////////////////////////////////////
+  // Should always be searched again
+  //var pairedBtNames = [];
+  //var pairedBtAddresses = [];
+
+  //var rhoBtName;
+  //storage.setItem("rhoBtName", rhoBtName);
+  console.log("rhoBtName: ", rhoBtName);
+  rhoBtName = storage.getItem("rhoBtName");
+  console.log("rhoBtName: ", rhoBtName);
+
+  //var lhoBtName;
+  //storage.setItem("lhoBtName", lhoBtName);
+  console.log("lhoBtName: ", lhoBtName);
+  lhoBtName = storage.getItem("lhoBtName");
+  console.log("lhoBtName: ", lhoBtName);
+
+  //var rhoBtAddress;
+  //storage.setItem("rhoBtAddress", rhoBtAddress);
+  console.log("rhoBtAddress: ", rhoBtAddress);
+  rhoBtAddress = storage.getItem("rhoBtAddress");
+  console.log("rhoBtAddress: ", rhoBtAddress);
+
+  //var lhoBtAddress;
+  //storage.setItem("lhoBtAddress", lhoBtAddress);
+  console.log("lhoBtAddress: ", lhoBtAddress);
+  lhoBtAddress = storage.getItem("lhoBtAddress");
+  console.log("lhoBtAddress: ", lhoBtAddress);
+
+  //var uuid = '94f39d29-7d6d-437d-973b-fba39e49d4ee';
+  //storage.setItem("uuid", uuid);
+  console.log("uuid: ", uuid);
+  uuid = storage.getItem("uuid");
+  console.log("uuid: ", uuid);
+
+  //var listeningForConnectionRequest = false;
+  //storage.setItem("listeningForConnectionRequest", String(listeningForConnectionRequest));
+  console.log("listeningForConnectionRequest: ", listeningForConnectionRequest);
+  listeningForConnectionRequest = (storage.getItem("listeningForConnectionRequest") == "true");
+  console.log("listeningForConnectionRequest: ", listeningForConnectionRequest);
+
+  //var lhoConnected = false;
+  //storage.setItem("lhoConnected", String(lhoConnected));
+  console.log("lhoConnected: ", lhoConnected);
+  lhoConnected = (storage.getItem("lhoConnected") == "true");
+  console.log("lhoConnected: ", lhoConnected);
+
+  //var rhoConnected = false;
+  //storage.setItem("rhoConnected", String(lhoConnected));
+  console.log("rhoConnected: ", rhoConnected);
+  rhoConnected = (storage.getItem("rhoConnected") == "true");
+  console.log("rhoConnected: ", rhoConnected);
+
+  //var lhoSocketId;
+  //storage.setItem("lhoSocketId", String(lhoSocketId));
+  console.log("lhoSocketId: ", lhoSocketId);
+  lhoSocketId = parseInt(storage.getItem("lhoSocketId"));
+  console.log("lhoSocketId: ", lhoSocketId);
+
+  //var rhoSocketId;
+  //storage.setItem("rhoSocketId", String(rhoSocketId));
+  console.log("rhoSocketId: ", rhoSocketId);
+  rhoSocketId = parseInt(storage.getItem("rhoSocketId"));
+  console.log("rhoSocketId: ", rhoSocketId);
+
+  //var serverSocketId;
+  //storage.setItem("serverSocketId", String(serverSocketId));
+  console.log("serverSocketId: ", serverSocketId);
+  serverSocketId = parseInt(storage.getItem("serverSocketId"));
+  console.log("serverSocketId: ", serverSocketId);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // The bidding record has been skipped for the moment.
+  // Has to be handled seperately
+  // The current idea is an entry for each call;
+  // the form could be:
+  // key: 'xxyyzz', xx = board nbr, yy = round nbr, zz = seatIx
+  // value: String(tricks) + suit + String(alert).
+  // or
+  // key: 'xxyyzz-tricks', value: String(tricks)
+  // key: 'xxyyzz-suit', value: suit
+  // key: 'xxyyzz-alert', value: String(alert)
+
+  //var boardsRec = []; // an array of roundsRec arrays
+  //var roundsRec = []; // an array of seatsRec arrays
+  //var seatsRec = []; // an array of 4 callObj objects
 }

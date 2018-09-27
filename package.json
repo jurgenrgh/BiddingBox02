@@ -10,7 +10,8 @@
     ],
     "plugins": {
       "cordova-plugin-exit": {},
-      "cordova-plugin-networking-bluetooth": {}
+      "cordova-plugin-networking-bluetooth": {},
+      "cordova-plugin-screen-orientation": {}
     }
   },
   "dependencies": {
@@ -20,6 +21,8 @@
     "cordova-plugin-exit": "^1.0.2",
     "cordova-plugin-exitapp": "^1.0.0",
     "cordova-plugin-networking-bluetooth": "^1.0.3",
+    "cordova-plugin-screen-orientation": "^3.0.1",
+    "es6-promise-plugin": "^4.2.2",
     "verbose": "0.2.3"
   }
 }

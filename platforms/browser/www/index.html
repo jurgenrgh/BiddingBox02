@@ -6,6 +6,7 @@
    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width, height=device-height">
    <title>BB_02</title>
    <link rel="stylesheet" type="text/css" href="css/index.css">
+   <link rel="stylesheet" type="text/css" href="css/console.css">
    <!--<link rel="stylesheet" type="text/css" href="css/splash.css">-->
    <script type="text/javascript" src="cordova.js"></script>
    <script type="text/javascript" src="js/globals.js"></script>
@@ -13,6 +14,7 @@
    <script type="text/javascript" src="js/box.js"></script>
    <script type="text/javascript" src="js/popupbox.js"></script>
    <script type="text/javascript" src="js/record.js"></script>
+   <script type="text/javascript" src="js/console.js"></script>
 </head>
 
 <body>
@@ -53,7 +55,191 @@
       </div>
    </div>
 
-   <div class=flex-container>
+   <!-- Second version of the Director's Console
+   <!-- Visible only when Setup clicked -->
+   <!------------------------------------->
+   <div id="directors-console">
+      <section class="grid-wrapper">
+         <div class="page-title">Director's Console</div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="section-title">Login</div>
+         <div class="item-inline">
+            <div align="right">Pin</div>
+            <div class="item-frame">
+               <form onsubmit="submitPin(event)" action="javascript:void(0);">
+                  <input class="console-nbr-input" type="number" id="input-pin" name="input-pin" min="1" max="9999">
+              </form>
+            </div>
+         </div>
+         <div class="item-blank"></div>
+
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="section-title">Location</div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="item-inline">
+            <div align="right">Section</div>
+            <div class="item-frame">
+               <form onsubmit="submitSectionId(event)" action="javascript:void(0);">
+                  <div class="btn-group">
+                     <div>
+                        <input class="console-text-input" type="text" id="input-section-id" name="input-section-id">
+                    </div>
+                     </div>
+               </form>
+            </div>
+         </div>
+
+         <div class="item-inline">
+            <div align="right">Table</div>
+            <div class="item-frame">
+               <form onsubmit="submitTableNumber(event)" action="javascript:void(0);">
+                  <div class="btn-group">
+                     <div>
+                        <input class="console-nbr-input" type="number" id="input-table-nbr" name="input-table-nbr" min="1" max="999">
+                    </div>
+                     </div>
+               </form>
+            </div>
+         </div>
+
+         <div class="item-inline">
+            <div align="right">Seat</div>
+            <div class="item-frame">
+               <div class="btn-group">
+                  <select class="console-select" id="input-seat" name="input-seat" onchange="handleSeatDirection(this.value, true)">
+                   <option value="N">&nbsp; N</option>
+                   <option value="E">&nbsp; E</option>
+                   <option value="S" selected>&nbsp; S</option>
+                   <option value="W">&nbsp; W</option>
+                 </select>
+               </div>
+            </div>
+         </div>
+
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="section-title">Boards</div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="item-inline">
+            <div align="right">First</div>
+            <div class="item-frame">
+               <form onsubmit="submitFirstBoardNumber(event)" action="javascript:void(0);">
+                  <div class="btn-group">
+                     <input class="console-nbr-input" type="number" id="first-board-nbr" name="first-board-nbr" min="1" max="36">
+                 </div>
+               </form>
+            </div>
+         </div>
+         <div class="item-inline">
+            <div align="right">Last</div>
+            <div class="item-frame">
+               <form onsubmit="submitLastBoardNumber(event)" action="javascript:void(0);">
+                  <div class="btn-group">
+                     <input class="console-nbr-input" type="number" id="last-board-nbr" name="last-board-nbr" min="1" max="36">
+                 </div>
+               </form>
+            </div>
+         </div>
+         <div class="item-blank"></div>
+
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="section-title">Tablet Names</div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="item-title">This Tablet</div>
+         <div class="item-title">RHO</div>
+         <div class="item-title">LHO</div>
+         <div id="this-tablet-name" class="item-frame"></div>
+         <div class="item-frame">
+            <div class="btn-group">
+               <select class="console-select" id="rho-name" name="rho-name" onchange="handleRhoChange(this)">
+
+              </select>
+            </div>
+         </div>
+         <div class="item-frame">
+            <div class="btn-group">
+               <select class="console-select" id="lho-name" name="lho-name" onchange="handleLhoChange(this)">
+
+              </select>
+            </div>
+         </div>
+
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="section-title">Connections</div>
+         <div class="item-button">
+            <button id="connect-button" class="push-button" onclick="connectClient()">Connect</button>
+         </div>
+         <div class="item-blank"></div>
+
+         <div class="item-title" style="font-weight: bold">Status</div>
+         <div class="item-title" style="font-weight: bold">RHO</div>
+         <div class="item-title" style="font-weight: bold">LHO</div>
+
+         <div class="item-title">Disconnected</div>
+         <div id="rho-disconnected" class="dot-red"></div>
+         <div id="lho-disconnected" class="dot-red"></div>
+
+         <div class="item-title">Waiting</div>
+         <div id="rho-waiting" class="dot-yellow"></div>
+         <div id="lho-waiting" class="dot-yellow"></div>
+
+         <div class="item-title">Connected</div>
+         <div id="rho-connected" class="dot-green"></div>
+         <div id="lho-connected" class="dot-green"></div>
+
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+         <div class="item-blank"></div>
+
+         <div class="section-title">Exit</div>
+         <div class="item-button">
+            <button id="return-to-bb" class="push-button" onclick="returnToBiddingBoxPage(2)">Return</button>
+         </div>
+         <div class="item-blank"></div>
+
+         <div class="section-title">Message</div>
+         <div class="item-button">
+            <button id="msg-to-rho" class="push-button" onclick="msgToRho()">To RHO</button>
+         </div>
+         <div class="item-button">
+            <button id="msg-to-lho" class="push-button" onclick="msgToLho()">To LHO</button>
+         </div>
+
+      </section>
+      <div>
+         <form onsubmit="submitSendMessage(event)" action="javascript:void(0);">
+            <div class="btn-group">
+               <div>
+                  <input class="console-message-input" type="text" id="input-message-id" name="input-message-id">
+                  <input class="console-message-input" type="text" id="received-message-id" name="received-message-id">
+               </div>
+           </div>
+         </form>
+      </div>
+   </div>
+   <!--End Director's Console V2-->
+
+   <div id="bb-page" class=flex-container>
       <div class=flex-top>
          <div class=flex-menu>
             <svg width="160" height="200" viewbox="0 0 120 150">
@@ -87,44 +273,9 @@
               </svg>
 
             <div class="btn-group">
-               <div>
-                  <button id="setup" onclick="handleSetup()">Setup</button>
-                  <!--<button id="lho" onclick="handleLHO()">&#x27A3;  LHO</button>-->
-                  <!--<button id="rho" onclick="handleRHO()">&#x27A3;  RHO</button>-->
-                  <button id="restart" onclick="handleRestart()">Restart</button>
-                  <!--<button id="undobid" onclick="handleUndoBid()">Undo Bid</button>-->
-               </div>
+               <button id="setup" onclick="handleSetup()">Setup</button>
+               <button id="restart" onclick="handleRestart()">Restart</button>
             </div>
-
-            <form onsubmit="submitSectionId(event)" action="javascript:void(0);">
-               <div class="btn-group">
-                  <div>
-                     <label for="input-section-id" id="input-section-id-label">Section</label>
-                     <input type="text" id="input-section-id" name="input-section-id">
-                  </div>
-               </div>
-            </form>
-
-            <form onsubmit="submitTableNumber(event)" action="javascript:void(0);">
-               <div class="btn-group">
-                  <div>
-                     <label for="input-table-nbr" id="input-table-nbr-label">Table</label>
-                     <input type="number" id="input-table-nbr" name="input-table-nbr" min="1" max="999">
-                  </div>
-               </div>
-            </form>
-
-            <!--form onsubmit="submitSeatDirection(event)" action="javascript:void(0);">-->
-            <div class="btn-group">
-               <label for="input-seat" id="input-seat-label">Seat</label>
-               <select id="input-seat" name="input-seat" onchange="handleSeatDirection(this.value, true)">
-                <option value="N">&nbsp; N</option>
-                <option value="E">&nbsp; E</option>
-                <option value="S" selected>&nbsp; S</option>
-                <option value="W">&nbsp; W</option>
-            </select>
-            </div>
-            <!--</form>-->
 
             <form onsubmit="submitBoardNumber(event)" action="javascript:void(0);">
                <div class="btn-group">
@@ -132,9 +283,8 @@
                      <label for="input-board-nbr" id="input-board-nbr-label">Board</label>
                      <input type="number" id="input-board-nbr" name="input-board-number" min="1" max="36">
                   </div>
-               </div>
+                  </div>
             </form>
-
 
          </div>
 
