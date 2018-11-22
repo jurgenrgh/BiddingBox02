@@ -218,7 +218,7 @@ function handleNewBoardNumber() {
 // prompt = true makes "promptbidder" popup show
 //
 function handleSeatDirection(val, popup) {
-  //console.log("handleseat", val, seatIx, bidderIx, dealerIx, boardIx);
+  
   if (val == "N") {
     seatIx = 0;
   }

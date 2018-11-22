@@ -1,5 +1,7 @@
 //////////////////////////////////////////////
 //Global Variables
+//////////////////////////////////////////////
+// Box Variables
 //
 var seatIx = 1; // Seat of this tablet
 var tableIx = 0; // Table of this tablet
@@ -16,7 +18,9 @@ var validPin = 1234;
 var firstBoardNbr = 1; //can be set by the director as first of current series
 var lastBoardNbr = 16; //dito
 
+/////////////////////////////////////////////////////////////////////////
 // Bluetooth Names and addresses
+//
 var thisTabletBtName = "void";
 var thisTabletBtAddress = "void";
 
@@ -36,13 +40,16 @@ var lhoSocketId = -1;
 var rhoSocketId = -1;
 var serverSocketId = -1;
 
+/////////////////////////////////////////////////////////////
 // The state of the bidding
+//
 // lastBidder: "ME", "PA", "LH", "RH", "NO"
 // tricks: #d the level bids
 // suit: "Clubs", "Diams", "Hearts", "Spades", "NT", "none"
 // dbl and rdble: true/false
 // boxOpen: true/false this seat is bidding
 // newCall: "X", "XX", "Pass", "none"
+//
 var bStat = {
   lastBidder: "NO",
   tricks: 0,
@@ -198,8 +205,6 @@ function drawCompass() {
   var south = textSouth.textContent;
   var west = textWest.textContent;
 
-  //console.log("drawCompass", tableIx, boardIx, dealerIx, vulIx );
-
   // Table Nbr and seat direction
   tnbr = tableIx + 1;
   textTableNbr.textContent = "Table " + sectionId + tnbr + seat;
@@ -269,7 +274,7 @@ window.onclick = function(event) {
   if (event.target == msg) {
     msg.style.display = "none";
   }
-}
+};
 
 //Used to cause the keyboard to hide
 function simulateClick() {
@@ -456,7 +461,7 @@ function arrayBufferFromString(str) {
 
 function stringFromArrayBuffer(buf) {
   return String.fromCharCode.apply(null, new Uint8Array(buf));
-};
+}
 
 // Store all local variables
 // Uses the simplest possible local storage mechanism consisting
@@ -582,9 +587,7 @@ function restoreSettings(){
 
   //var dealerIx = 0; // Dealer; function of boardIx
   //storage.setItem("dealerIx", dealerIx.toString());
-  console.log("dealerIx: ", dealerIx);
   dealerIx = parseInt(storage.getItem("dealerIx"));
-  console.log("dealerIx: ", dealerIx);
 
   //var vulIx = 0; // Vulnerability; function of boardIx
   //storage.setItem("vulIx", vulIx.toString());

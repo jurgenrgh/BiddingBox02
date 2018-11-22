@@ -10,6 +10,7 @@
 // function handleCalls(idCall)
 // function handleSubmitCall()
 // function checkEnableSubmit()
+// function cancelCurrentBid()
 //
 ///////////////////////////////////////////////////////////////////////////////
 // Reset the bidding status (bStat) and the bidding box
@@ -18,16 +19,17 @@ function clearBidBox() {
   //Enable the trick buttons
   var idSuit;
   var id;
+  var i;
   //console.log("clearBidBox Enter", bStat);
 
-  for (var i = 1; i <= 7; i++) {
+  for (i = 1; i <= 7; i++) {
     id = i.toString();
     unselectBidButton(id);
     enableBidButton(id);
   }
 
   // Enable suit buttons
-  for (var i = 0; i < 5; i++) {
+  for (i = 0; i < 5; i++) {
     idSuit = suitNameOrder[i];
     unselectBidButton(idSuit);
     enableBidButton(idSuit);

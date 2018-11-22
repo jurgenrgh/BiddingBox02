@@ -67,8 +67,8 @@ function initBiddingRecord(boardNr) {
 
   // All cells of the table are emptied
   var table = document.getElementById("auction");
-  for (i = 1, row; row = table.rows[i]; i++) {
-    for (j = 0, col; col = row.cells[j]; j++) {
+  for (i = 1, row; row <= table.rows[i]; i++) {
+    for (j = 0, col; col <= row.cells[j]; j++) {
       table.rows[i].cells[j].innerHTML = "&nbsp;";
       unhiliteBiddingRecordCell(i,j);
     }
